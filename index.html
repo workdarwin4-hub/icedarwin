@@ -2,46 +2,55 @@
 <html lang="ar" dir="rtl">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <title>ICY TOWER CLASSIC: DARWIN & CREW</title>
   <style>
     * {
       box-sizing: border-box;
       user-select: none;
       -webkit-user-select: none;
+      -webkit-touch-callout: none;
       margin: 0;
       padding: 0;
     }
-    body {
+    html, body {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
       background: #09090b;
       color: #fff;
       font-family: 'Arial Black', 'Segoe UI', Tahoma, sans-serif;
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 100vh;
       overflow: hidden;
+      touch-action: none;
     }
     #game-wrapper {
       position: relative;
       width: 100%;
       max-width: 480px;
-      height: 100vh;
-      max-height: 850px;
+      height: 100dvh;
+      height: 100%;
+      max-height: 880px;
       background: #1a1824;
       box-shadow: 0 0 50px rgba(0, 0, 0, 0.95);
       overflow: hidden;
-      border-left: 4px solid #000;
-      border-right: 4px solid #000;
+      border-left: 3px solid #000;
+      border-right: 3px solid #000;
     }
     canvas {
       display: block;
       width: 100%;
       height: 100%;
+      touch-action: none;
     }
     #hud {
       position: absolute;
-      top: 10px;
+      top: max(10px, env(safe-area-inset-top));
       left: 10px;
       right: 10px;
       display: flex;
@@ -53,51 +62,50 @@
     }
     .hud-box {
       background: rgba(15, 14, 22, 0.88);
-      border: 3px solid #000;
+      border: 2.5px solid #000;
       box-shadow: 0 3px 0 rgba(0,0,0,0.6), inset 0 0 0 1px rgba(255,255,255,0.15);
       border-radius: 10px;
-      padding: 5px 10px;
+      padding: 4px 9px;
     }
     .hud-label {
-      font-size: 10px;
+      font-size: 9.5px;
       color: #bbb;
       font-family: 'Segoe UI', Tahoma, sans-serif;
       font-weight: bold;
     }
     .hud-val {
-      font-size: 19px;
+      font-size: 17px;
       font-weight: 900;
       color: #ffdd59;
-      text-shadow: 2px 2px 0 #000;
+      text-shadow: 1.5px 1.5px 0 #000;
     }
     #weather-badge {
       text-align: center;
       flex: 1;
     }
     #active-char-hud {
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 900;
       color: #2ed573;
       text-shadow: 1.5px 1.5px 0 #000;
       font-family: 'Segoe UI', Tahoma, sans-serif;
-      margin-bottom: 1px;
     }
     #weather-name {
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 900;
       color: #fff;
       text-shadow: 1.5px 1.5px 0 #000;
       font-family: 'Segoe UI', Tahoma, sans-serif;
     }
     #level-name {
-      font-size: 10px;
+      font-size: 9.5px;
       color: #ff6b81;
       font-weight: bold;
       font-family: 'Segoe UI', Tahoma, sans-serif;
     }
     #combo-container {
       position: absolute;
-      top: 88px;
+      top: 82px;
       left: 50%;
       transform: translateX(-50%);
       text-align: center;
@@ -107,15 +115,15 @@
       transition: opacity 0.2s;
     }
     #combo-text {
-      font-size: 28px;
+      font-size: 26px;
       font-weight: 900;
       color: #ffdd59;
       text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000, 0 4px 0 #000;
       font-style: italic;
     }
     #combo-bar-bg {
-      width: 136px;
-      height: 10px;
+      width: 130px;
+      height: 9px;
       background: #000;
       border-radius: 5px;
       margin: 4px auto 0;
@@ -129,15 +137,15 @@
     }
     #season-banner {
       position: absolute;
-      top: 34%;
+      top: 32%;
       left: 50%;
       transform: translate(-50%, -50%) scale(0.8);
       background: #1e1b29;
-      border: 4px solid #000;
-      box-shadow: 0 8px 0 #000, inset 0 0 0 2px #ffdd59;
-      padding: 12px 24px;
+      border: 3.5px solid #000;
+      box-shadow: 0 7px 0 #000, inset 0 0 0 2px #ffdd59;
+      padding: 10px 20px;
       border-radius: 14px;
-      font-size: 21px;
+      font-size: 18px;
       font-weight: 900;
       color: #ffdd59;
       text-shadow: 2px 2px 0 #000;
@@ -147,44 +155,46 @@
       transition: all 0.3s ease;
       z-index: 15;
       text-align: center;
+      width: 82%;
     }
     .overlay-screen {
       position: absolute;
       inset: 0;
-      background: rgba(14, 12, 22, 0.93);
+      background: rgba(14, 12, 22, 0.94);
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
       text-align: center;
-      padding: 18px;
-      z-index: 20;
+      padding: 16px;
+      z-index: 25;
       overflow-y: auto;
+      touch-action: auto;
     }
     .hidden {
       display: none !important;
     }
     .game-title {
-      font-size: 36px;
+      font-size: 32px;
       font-weight: 900;
       line-height: 1.05;
       margin-bottom: 6px;
       color: #fff;
-      text-shadow: -3px -3px 0 #000, 3px -3px 0 #000, -3px 3px 0 #000, 3px 3px 0 #000, 0 5px 0 #e84118;
+      text-shadow: -2.5px -2.5px 0 #000, 2.5px -2.5px 0 #000, -2.5px 2.5px 0 #000, 2.5px 2.5px 0 #000, 0 5px 0 #e84118;
     }
     .creator-credit {
-      font-size: 12px;
+      font-size: 11px;
       color: #ffdd59;
       background: rgba(0, 0, 0, 0.65);
       border: 2px solid #000;
       padding: 4px 12px;
       border-radius: 20px;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
       font-family: 'Segoe UI', Tahoma, sans-serif;
       font-weight: 800;
     }
     .select-label {
-      font-size: 14px;
+      font-size: 13px;
       color: #fff;
       margin-bottom: 8px;
       font-family: 'Segoe UI', Tahoma, sans-serif;
@@ -193,16 +203,16 @@
     .char-grid {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 10px;
+      gap: 8px;
       width: 100%;
-      max-width: 360px;
-      margin-bottom: 16px;
+      max-width: 340px;
+      margin-bottom: 14px;
     }
     .char-card {
       background: #232033;
       border: 3px solid #000;
       border-radius: 12px;
-      padding: 8px 6px;
+      padding: 6px 4px;
       cursor: pointer;
       display: flex;
       flex-direction: column;
@@ -210,9 +220,6 @@
       transition: transform 0.12s, background 0.15s;
       box-shadow: 0 4px 0 #000;
       position: relative;
-    }
-    .char-card:hover {
-      background: #2d2942;
     }
     .char-card.selected {
       background: #352f4d;
@@ -234,12 +241,12 @@
       font-family: 'Segoe UI', Tahoma, sans-serif;
     }
     .char-preview {
-      width: 64px;
-      height: 76px;
-      margin-bottom: 4px;
+      width: 58px;
+      height: 68px;
+      margin-bottom: 2px;
     }
     .char-name {
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 900;
       color: #fff;
       font-family: 'Segoe UI', Tahoma, sans-serif;
@@ -248,7 +255,7 @@
       color: #ffdd59;
     }
     .char-role {
-      font-size: 10px;
+      font-size: 9.5px;
       color: #aaa;
       font-family: 'Segoe UI', Tahoma, sans-serif;
       font-weight: bold;
@@ -256,8 +263,8 @@
     .subtitle {
       font-size: 13px;
       color: #ddd;
-      margin-bottom: 14px;
-      max-width: 320px;
+      margin-bottom: 12px;
+      max-width: 310px;
       line-height: 1.5;
       font-family: 'Segoe UI', Tahoma, sans-serif;
       font-weight: bold;
@@ -265,9 +272,9 @@
     .btn {
       background: #ffdd59;
       color: #000;
-      border: 4px solid #000;
-      padding: 11px 36px;
-      font-size: 20px;
+      border: 3.5px solid #000;
+      padding: 10px 34px;
+      font-size: 19px;
       font-weight: 900;
       border-radius: 14px;
       cursor: pointer;
@@ -282,62 +289,71 @@
     .btn-secondary {
       background: #2f3542;
       color: #fff;
-      font-size: 15px;
-      padding: 8px 22px;
+      font-size: 14px;
+      padding: 8px 20px;
       margin-top: 10px;
     }
     .controls-hint {
-      margin-top: 14px;
+      margin-top: 12px;
       font-size: 11px;
       color: #bbb;
       background: rgba(0,0,0,0.55);
       border: 2px solid #000;
-      padding: 8px 14px;
+      padding: 7px 12px;
       border-radius: 10px;
       font-family: 'Segoe UI', Tahoma, sans-serif;
+      line-height: 1.4;
     }
+
+    /* Mobile Controls Dock - Elevated cleanly above Safari/Chrome bottom bar */
     #mobile-controls {
       position: absolute;
-      bottom: 16px;
+      bottom: max(18px, calc(env(safe-area-inset-bottom) + 14px));
       left: 14px;
       right: 14px;
       display: flex;
       justify-content: space-between;
-      z-index: 12;
+      align-items: center;
+      z-index: 15;
       pointer-events: none;
     }
     .touch-group {
       display: flex;
-      gap: 12px;
+      gap: 14px;
       pointer-events: auto;
     }
     .touch-btn {
-      width: 64px;
-      height: 64px;
+      width: 68px;
+      height: 68px;
       border-radius: 50%;
-      background: rgba(25, 23, 36, 0.78);
-      border: 3px solid #000;
-      box-shadow: 0 4px 0 #000;
+      background: rgba(20, 18, 30, 0.85);
+      border: 3.5px solid #000;
+      box-shadow: 0 5px 0 #000, inset 0 0 0 2px rgba(255,255,255,0.2);
       color: #fff;
-      font-size: 22px;
+      font-size: 24px;
       font-weight: bold;
       display: flex;
       justify-content: center;
       align-items: center;
-      touch-action: manipulation;
+      touch-action: none;
     }
-    .touch-btn:active {
+    .touch-btn.active, .touch-btn:active {
       background: #ffdd59;
       color: #000;
       transform: translateY(3px);
-      box-shadow: 0 1px 0 #000;
+      box-shadow: 0 2px 0 #000;
     }
     #btn-jump {
-      width: 76px;
-      height: 76px;
-      background: rgba(232, 65, 24, 0.85);
-      font-size: 16px;
+      width: 82px;
+      height: 82px;
+      background: rgba(232, 65, 24, 0.92);
+      font-size: 18px;
+      font-weight: 900;
       font-family: 'Segoe UI', Tahoma, sans-serif;
+    }
+    #btn-jump.active, #btn-jump:active {
+      background: #ffdd59;
+      color: #000;
     }
   </style>
 </head>
@@ -377,31 +393,29 @@
 
   <!-- Start & Character Select Screen -->
   <div id="start-screen" class="overlay-screen">
-    <div class="game-title">ICY TOWER<br><span style="font-size:21px;color:#ffdd59;">DARWIN EDITION</span></div>
+    <div class="game-title">ICY TOWER<br><span style="font-size:19px;color:#ffdd59;">DARWIN EDITION</span></div>
     <div class="creator-credit">🎮 تصميم وتطوير: داروين (الشخصية الأساسية)</div>
 
     <div class="select-label">اختر شخصيتك قبل الصعود:</div>
-    <div class="char-grid" id="char-grid">
-      <!-- Populated by JS with live canvas previews -->
-    </div>
+    <div class="char-grid" id="char-grid"></div>
 
     <button class="btn" id="start-btn">ابدأ اللعب 🚀</button>
     <div class="controls-hint">
-      الكمبيوتر: الأسهم ⬅️ ➡️ للحركة + مسطرة (Space) للقفز<br>
-      الموبايل: الأزرار أسفل الشاشة
+      📱 الموبايل: استخدم الأزرار تحت أو اسحب بصباعك على الشاشة<br>
+      💻 الكمبيوتر: الأسهم ⬅️ ➡️ + مسطرة (Space)
     </div>
   </div>
 
   <!-- Game Over Screen -->
   <div id="gameover-screen" class="overlay-screen hidden">
     <div class="game-title" style="color:#ff4757;">وقعت!</div>
-    <p class="subtitle" id="final-stats" style="font-size:17px;color:#fff;"></p>
+    <p class="subtitle" id="final-stats" style="font-size:16px;color:#fff;"></p>
     <p class="subtitle" id="best-stats" style="color:#ffdd59;"></p>
     <button class="btn" id="restart-btn">العب تاني</button>
     <button class="btn btn-secondary" id="change-char-btn">تغيير الشخصية</button>
   </div>
 
-  <!-- Mobile Controls -->
+  <!-- Mobile Controls (Elevated clearly above browser bar) -->
   <div id="mobile-controls">
     <div class="touch-group">
       <div class="touch-btn" id="btn-right">➡️</div>
@@ -417,41 +431,15 @@
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
-// Characters Roster
 const CHARACTERS = [
-  {
-    id: 'darwin',
-    name: 'داروين',
-    role: 'مصمم اللعبة (الأساسي)',
-    badge: 'الأساسي ⭐',
-    isMain: true
-  },
-  {
-    id: 'abyusif',
-    name: 'ابيوسف',
-    role: 'تيشيرت DAR & شنطة',
-    badge: null,
-    isMain: false
-  },
-  {
-    id: 'seif',
-    name: 'سيف',
-    role: 'سويت شيرت أسود',
-    badge: null,
-    isMain: false
-  },
-  {
-    id: 'youssef_hamada',
-    name: 'يوسف حماده',
-    role: 'كاب أسود & أبيض',
-    badge: null,
-    isMain: false
-  }
+  { id: 'darwin', name: 'داروين', role: 'مصمم اللعبة (الأساسي)', badge: 'الأساسي ⭐', isMain: true },
+  { id: 'abyusif', name: 'ابيوسف', role: 'تيشيرت DAR & شنطة', badge: null, isMain: false },
+  { id: 'seif', name: 'سيف', role: 'سويت شيرت أسود', badge: null, isMain: false },
+  { id: 'youssef_hamada', name: 'يوسف حماده', role: 'كاب أسود & أبيض', badge: null, isMain: false }
 ];
 
 let selectedCharId = localStorage.getItem('icy_selected_char') || 'darwin';
 
-// Retro Arcade Sound Synthesizer
 const AudioCtx = window.AudioContext || window.webkitAudioContext;
 let audioCtx = null;
 
@@ -510,18 +498,26 @@ function playSound(type, pitchMod = 1) {
   } catch (e) {}
 }
 
+// Accurate Mobile Viewport Sizing (Fixes Safari/Chrome bottom bar overlap!)
 let W = 480, H = 800;
+let GROUND_OFFSET = 115; // Leaves clean breathing room at bottom so controls never cover the player
+
 function resize() {
   const wrapper = document.getElementById('game-wrapper');
+  const vh = window.visualViewport ? window.visualViewport.height : window.innerHeight;
+  wrapper.style.height = vh + 'px';
   W = wrapper.clientWidth;
   H = wrapper.clientHeight;
   canvas.width = W;
   canvas.height = H;
+  GROUND_OFFSET = W <= 500 ? 115 : 65;
 }
 window.addEventListener('resize', resize);
+if (window.visualViewport) {
+  window.visualViewport.addEventListener('resize', resize);
+}
 resize();
 
-// Classic Icy Tower Brick Wall & Platform Themes per Weather
 const SEASONS = [
   {
     id: 'summer',
@@ -614,10 +610,9 @@ let particles = [];
 let floatingTexts = [];
 let lightningFlash = 0;
 
-// Player Object (Chunky Icy Tower Proportions)
 const player = {
   x: W / 2,
-  y: H - 110,
+  y: H - 150,
   w: 44,
   h: 68,
   vx: 0,
@@ -651,34 +646,87 @@ window.addEventListener('keyup', (e) => {
 
 function bindTouch(id, keyName, isJump = false) {
   const el = document.getElementById(id);
-  el.addEventListener('touchstart', (e) => {
-    e.preventDefault();
+  const activate = (e) => {
+    if (e.cancelable) e.preventDefault();
     keys[keyName] = true;
+    el.classList.add('active');
     if (isJump) triggerJump();
-  }, { passive: false });
-  el.addEventListener('touchend', (e) => {
-    e.preventDefault();
+  };
+  const deactivate = (e) => {
+    if (e.cancelable) e.preventDefault();
     keys[keyName] = false;
-  }, { passive: false });
-  el.addEventListener('mousedown', () => {
-    keys[keyName] = true;
-    if (isJump) triggerJump();
-  });
-  el.addEventListener('mouseup', () => keys[keyName] = false);
-  el.addEventListener('mouseleave', () => keys[keyName] = false);
+    el.classList.remove('active');
+  };
+
+  el.addEventListener('touchstart', activate, { passive: false });
+  el.addEventListener('touchend', deactivate, { passive: false });
+  el.addEventListener('touchcancel', deactivate, { passive: false });
+  el.addEventListener('mousedown', activate);
+  el.addEventListener('mouseup', deactivate);
+  el.addEventListener('mouseleave', deactivate);
 }
 bindTouch('btn-left', 'left');
 bindTouch('btn-right', 'right');
 bindTouch('btn-jump', 'jump', true);
 
+// Bonus: Direct Screen Touch / Swipe Controls for effortless one-hand or two-thumb phone play
+let touchMoveId = null;
+let touchStartX = 0;
+
+canvas.addEventListener('touchstart', (e) => {
+  if (gameState !== 'PLAYING') return;
+  for (let t of e.changedTouches) {
+    if (touchMoveId === null) {
+      touchMoveId = t.identifier;
+      touchStartX = t.clientX;
+      // Tapping upper half of screen also jumps
+      if (t.clientY < H * 0.65) {
+        triggerJump();
+      }
+    } else {
+      // Second finger tap anywhere jumps!
+      triggerJump();
+    }
+  }
+}, { passive: true });
+
+canvas.addEventListener('touchmove', (e) => {
+  if (gameState !== 'PLAYING') return;
+  for (let t of e.changedTouches) {
+    if (t.identifier === touchMoveId) {
+      const dx = t.clientX - touchStartX;
+      if (dx < -14) {
+        keys.left = true;
+        keys.right = false;
+      } else if (dx > 14) {
+        keys.right = true;
+        keys.left = false;
+      } else {
+        keys.left = false;
+        keys.right = false;
+      }
+    }
+  }
+}, { passive: true });
+
+canvas.addEventListener('touchend', (e) => {
+  for (let t of e.changedTouches) {
+    if (t.identifier === touchMoveId) {
+      touchMoveId = null;
+      keys.left = false;
+      keys.right = false;
+    }
+  }
+}, { passive: true });
+
 function triggerJump() {
   if (gameState !== 'PLAYING') return;
   if (player.grounded) {
-    const speedBonus = Math.abs(player.vx) * 0.7;
-    player.vy = -(13.0 + speedBonus);
+    const speedBonus = Math.abs(player.vx) * 0.72;
+    player.vy = -(13.2 + speedBonus);
     player.grounded = false;
 
-    if (Math.abs(player.vx) > 5.6) {
+    if (Math.abs(player.vx) > 5.5) {
       player.isSpinning = true;
       player.spinAngle = 0;
       playSound('jump', 1.35);
@@ -689,11 +737,11 @@ function triggerJump() {
   }
 }
 
-const WALL_WIDTH = 28;
-const FLOOR_GAP = 95;
+const WALL_WIDTH = 24;
+const FLOOR_GAP = 92;
 
 function createPlatform(floorNum) {
-  const y = H - 55 - floorNum * FLOOR_GAP;
+  const y = H - GROUND_OFFSET - floorNum * FLOOR_GAP;
   if (floorNum === 0) {
     return {
       floor: 0,
@@ -706,9 +754,9 @@ function createPlatform(floorNum) {
     };
   }
 
-  const shrink = Math.min(95, floorNum * 0.35);
-  const minW = Math.max(82, 140 - shrink);
-  const maxW = Math.max(120, 225 - shrink);
+  const shrink = Math.min(85, floorNum * 0.32);
+  const minW = Math.max(85, (W * 0.30) - shrink);
+  const maxW = Math.max(125, (W * 0.48) - shrink);
   const isMilestone = floorNum % 50 === 0;
 
   const w = isMilestone ? (W - WALL_WIDTH * 2) : (minW + Math.random() * (maxW - minW));
@@ -718,7 +766,7 @@ function createPlatform(floorNum) {
 
   let vx = 0;
   if (!isMilestone && floorNum > 25 && Math.random() < Math.min(0.45, floorNum / 400)) {
-    vx = (Math.random() < 0.5 ? -1 : 1) * (1.2 + Math.min(3.2, floorNum / 90));
+    vx = (Math.random() < 0.5 ? -1 : 1) * (1.2 + Math.min(3.0, floorNum / 90));
   }
 
   return { floor: floorNum, x, y, w, h: 20, vx, isMilestone };
@@ -726,7 +774,7 @@ function createPlatform(floorNum) {
 
 function initParticles(seasonId) {
   particles = [];
-  const count = seasonId === 'rain' || seasonId === 'storm' ? 95 : (seasonId === 'snow' ? 80 : (seasonId === 'autumn' ? 28 : 16));
+  const count = seasonId === 'rain' || seasonId === 'storm' ? 90 : (seasonId === 'snow' ? 75 : (seasonId === 'autumn' ? 25 : 14));
   for (let i = 0; i < count; i++) {
     particles.push({
       x: Math.random() * W,
@@ -747,10 +795,11 @@ function showBanner(text) {
   setTimeout(() => {
     banner.style.opacity = '0';
     banner.style.transform = 'translate(-50%, -50%) scale(0.8)';
-  }, 2400);
+  }, 2300);
 }
 
 function resetGame() {
+  resize();
   score = 0;
   cameraY = 0;
   autoScrollSpeed = 0;
@@ -758,13 +807,16 @@ function resetGame() {
   difficultyLevel = 1;
   platforms = [];
   floatingTexts = [];
+  keys.left = false;
+  keys.right = false;
+  keys.jump = false;
 
   for (let i = 0; i < 20; i++) {
     platforms.push(createPlatform(i));
   }
 
   player.x = W / 2 - player.w / 2;
-  player.y = H - 55 - player.h;
+  player.y = H - GROUND_OFFSET - player.h;
   player.vx = 0;
   player.vy = 0;
   player.grounded = true;
@@ -842,7 +894,7 @@ function update() {
   if (gameState !== 'PLAYING') return;
 
   const season = SEASONS[currentSeasonIndex];
-  const accel = player.grounded ? (season.id === 'snow' ? 0.55 : 0.95) : 0.72;
+  const accel = player.grounded ? (season.id === 'snow' ? 0.58 : 1.0) : 0.76;
   const maxSpeed = 8.8;
 
   if (keys.left) {
@@ -954,7 +1006,7 @@ function update() {
   }
 
   let highestFloor = platforms[platforms.length - 1].floor;
-  while (H - 55 - highestFloor * FLOOR_GAP + cameraY > -200) {
+  while (H - GROUND_OFFSET - highestFloor * FLOOR_GAP + cameraY > -200) {
     highestFloor++;
     platforms.push(createPlatform(highestFloor));
   }
@@ -979,7 +1031,7 @@ function update() {
   }
   floatingTexts = floatingTexts.filter(ft => ft.alpha > 0);
 
-  if (player.y + cameraY > H + 20) triggerGameOver();
+  if (player.y + cameraY > H + 10) triggerGameOver();
 
   updateHUD();
 }
@@ -1020,12 +1072,7 @@ function drawCharacterSprite(targetCtx, charId, facing, walkFrame, isSpinning, s
   targetCtx.lineJoin = 'round';
   targetCtx.lineCap = 'round';
 
-  // ---------------------------------------------------
-  // 1. DARWIN (Main Character - Designer of the Game)
-  // Beanie + Very Clear White Glasses + Black "F*CK IT IM PAID" Hoodie + Grey Cargo Pants
-  // ---------------------------------------------------
   if (charId === 'darwin') {
-    // Sneakers (Off-white chunky skate shoes)
     targetCtx.lineWidth = 3.2;
     targetCtx.strokeStyle = '#000000';
     targetCtx.fillStyle = '#dcd7c9';
@@ -1040,7 +1087,6 @@ function drawCharacterSprite(targetCtx, charId, facing, walkFrame, isSpinning, s
     targetCtx.fill();
     targetCtx.stroke();
 
-    // Wide Grey Cargo Pants
     targetCtx.fillStyle = '#5d6166';
     targetCtx.beginPath();
     targetCtx.moveTo(-15, 11);
@@ -1054,13 +1100,11 @@ function drawCharacterSprite(targetCtx, charId, facing, walkFrame, isSpinning, s
     targetCtx.fill();
     targetCtx.stroke();
 
-    // Cargo Pocket
     targetCtx.lineWidth = 1.8;
     targetCtx.fillStyle = '#4a4e52';
     targetCtx.fillRect(5 + legSwing * 0.4, 15, 7, 7);
     targetCtx.strokeRect(5 + legSwing * 0.4, 15, 7, 7);
 
-    // Black Oversized Hoodie
     targetCtx.lineWidth = 3.4;
     targetCtx.fillStyle = '#151518';
     targetCtx.beginPath();
@@ -1068,7 +1112,6 @@ function drawCharacterSprite(targetCtx, charId, facing, walkFrame, isSpinning, s
     targetCtx.fill();
     targetCtx.stroke();
 
-    // Hoodie Text: F*CK IT / IM PAID
     targetCtx.save();
     targetCtx.scale(facing, 1);
     targetCtx.fillStyle = '#ffffff';
@@ -1078,7 +1121,6 @@ function drawCharacterSprite(targetCtx, charId, facing, walkFrame, isSpinning, s
     targetCtx.fillText('IM PAID', 0, 9.5);
     targetCtx.restore();
 
-    // Face & Ears
     targetCtx.lineWidth = 3.2;
     targetCtx.strokeStyle = '#000000';
     targetCtx.fillStyle = '#e09f70';
@@ -1093,13 +1135,11 @@ function drawCharacterSprite(targetCtx, charId, facing, walkFrame, isSpinning, s
     targetCtx.fill();
     targetCtx.stroke();
 
-    // Mouth
     targetCtx.lineWidth = 2.2;
     targetCtx.beginPath();
     targetCtx.arc(1, -10.5, 7.5, 0.2 * Math.PI, 0.8 * Math.PI);
     targetCtx.stroke();
 
-    // Tall Black Beanie (Positioned slightly higher so the sunglasses are 100% clear & prominent!)
     targetCtx.lineWidth = 3.4;
     targetCtx.fillStyle = '#141418';
     targetCtx.beginPath();
@@ -1111,14 +1151,12 @@ function drawCharacterSprite(targetCtx, charId, facing, walkFrame, isSpinning, s
     targetCtx.fill();
     targetCtx.stroke();
 
-    // Beanie Cuff
     targetCtx.fillStyle = '#1e1e26';
     targetCtx.beginPath();
     targetCtx.roundRect(-17.5, -26.5, 35, 7.5, 3.5);
     targetCtx.fill();
     targetCtx.stroke();
 
-    // Alien Pin on Beanie Cuff
     targetCtx.lineWidth = 1.4;
     targetCtx.fillStyle = '#ffffff';
     targetCtx.beginPath();
@@ -1129,7 +1167,6 @@ function drawCharacterSprite(targetCtx, charId, facing, walkFrame, isSpinning, s
     targetCtx.fillRect(-11.3, -23.5, 1.1, 1.4);
     targetCtx.fillRect(-9.3, -23.5, 1.1, 1.4);
 
-    // EXTRA CLEAR & PROMINENT WHITE WRAP-AROUND SUNGLASSES
     targetCtx.lineWidth = 2.6;
     targetCtx.strokeStyle = '#000000';
     targetCtx.fillStyle = '#ffffff';
@@ -1138,14 +1175,12 @@ function drawCharacterSprite(targetCtx, charId, facing, walkFrame, isSpinning, s
     targetCtx.fill();
     targetCtx.stroke();
 
-    // Dark Lenses with White Shine Reflection
     targetCtx.fillStyle = '#0c0c10';
     targetCtx.beginPath();
     targetCtx.roundRect(-5.5, -18, 8.2, 4.8, 1.8);
     targetCtx.roundRect(4.5, -18, 8.2, 4.8, 1.8);
     targetCtx.fill();
 
-    // Glossy Lens Reflection Streaks
     targetCtx.strokeStyle = '#ffffff';
     targetCtx.lineWidth = 1.3;
     targetCtx.beginPath();
@@ -1156,14 +1191,10 @@ function drawCharacterSprite(targetCtx, charId, facing, walkFrame, isSpinning, s
     targetCtx.stroke();
   }
 
-  // ---------------------------------------------------
-  // 2. ABYUSIF (Curly black hair, mustache & goatee, white "DAR" tee, black backpack straps)
-  // ---------------------------------------------------
   else if (charId === 'abyusif') {
     targetCtx.lineWidth = 3.2;
     targetCtx.strokeStyle = '#000000';
 
-    // Sneakers
     targetCtx.fillStyle = '#222';
     targetCtx.beginPath();
     targetCtx.ellipse(-7 - legSwing * 0.7, 29, 9.5, 5.5, 0, 0, Math.PI * 2);
@@ -1171,7 +1202,6 @@ function drawCharacterSprite(targetCtx, charId, facing, walkFrame, isSpinning, s
     targetCtx.fill();
     targetCtx.stroke();
 
-    // Dark Jeans
     targetCtx.fillStyle = '#2c3e50';
     targetCtx.beginPath();
     targetCtx.moveTo(-14, 11);
@@ -1185,21 +1215,18 @@ function drawCharacterSprite(targetCtx, charId, facing, walkFrame, isSpinning, s
     targetCtx.fill();
     targetCtx.stroke();
 
-    // White T-Shirt
     targetCtx.fillStyle = '#f5f6fa';
     targetCtx.beginPath();
     targetCtx.roundRect(-18, -7, 36, 21, 9);
     targetCtx.fill();
     targetCtx.stroke();
 
-    // Black Backpack Straps on Shoulders (from his photo!)
     targetCtx.fillStyle = '#18181c';
     targetCtx.fillRect(-15, -7, 4.5, 19);
     targetCtx.strokeRect(-15, -7, 4.5, 19);
     targetCtx.fillRect(10.5, -7, 4.5, 19);
     targetCtx.strokeRect(10.5, -7, 4.5, 19);
 
-    // "DAR" print on chest
     targetCtx.save();
     targetCtx.scale(facing, 1);
     targetCtx.fillStyle = '#444';
@@ -1208,7 +1235,6 @@ function drawCharacterSprite(targetCtx, charId, facing, walkFrame, isSpinning, s
     targetCtx.fillText('DAR', 0, 7);
     targetCtx.restore();
 
-    // Face (Warm Tan Skin)
     targetCtx.fillStyle = '#c6865c';
     targetCtx.beginPath();
     targetCtx.arc(-15, -14, 4, 0, Math.PI * 2);
@@ -1221,7 +1247,6 @@ function drawCharacterSprite(targetCtx, charId, facing, walkFrame, isSpinning, s
     targetCtx.fill();
     targetCtx.stroke();
 
-    // Eyes & Eyebrows
     targetCtx.fillStyle = '#000';
     targetCtx.beginPath();
     targetCtx.arc(-3, -16, 2, 0, Math.PI * 2);
@@ -1235,7 +1260,6 @@ function drawCharacterSprite(targetCtx, charId, facing, walkFrame, isSpinning, s
     targetCtx.lineTo(10, -19.5);
     targetCtx.stroke();
 
-    // Mustache & Goatee Beard
     targetCtx.fillStyle = '#111';
     targetCtx.beginPath();
     targetCtx.roundRect(-2, -11.5, 9, 2.3, 1);
@@ -1244,7 +1268,6 @@ function drawCharacterSprite(targetCtx, charId, facing, walkFrame, isSpinning, s
     targetCtx.arc(2.5, -5.5, 4.2, 0, Math.PI);
     targetCtx.fill();
 
-    // Curly Black Hair Crown
     targetCtx.fillStyle = '#111114';
     targetCtx.lineWidth = 2.8;
     const curls = [
@@ -1258,14 +1281,10 @@ function drawCharacterSprite(targetCtx, charId, facing, walkFrame, isSpinning, s
     }
   }
 
-  // ---------------------------------------------------
-  // 3. SEIF (Curly short hair, Black Quarter-Zip Sweatshirt with white undershirt, Light Grey Sweatpants, Black Shoes)
-  // ---------------------------------------------------
   else if (charId === 'seif') {
     targetCtx.lineWidth = 3.2;
     targetCtx.strokeStyle = '#000000';
 
-    // Black Sneakers
     targetCtx.fillStyle = '#141417';
     targetCtx.beginPath();
     targetCtx.ellipse(-7 - legSwing * 0.7, 29, 9.5, 5.5, 0, 0, Math.PI * 2);
@@ -1273,7 +1292,6 @@ function drawCharacterSprite(targetCtx, charId, facing, walkFrame, isSpinning, s
     targetCtx.fill();
     targetCtx.stroke();
 
-    // Light Grey Baggy Sweatpants
     targetCtx.fillStyle = '#b2b6bc';
     targetCtx.beginPath();
     targetCtx.moveTo(-15, 11);
@@ -1287,7 +1305,6 @@ function drawCharacterSprite(targetCtx, charId, facing, walkFrame, isSpinning, s
     targetCtx.fill();
     targetCtx.stroke();
 
-    // White Drawstring & White Undershirt Hem
     targetCtx.fillStyle = '#ffffff';
     targetCtx.fillRect(-15, 9, 30, 3.5);
     targetCtx.strokeStyle = '#ffffff';
@@ -1299,7 +1316,6 @@ function drawCharacterSprite(targetCtx, charId, facing, walkFrame, isSpinning, s
     targetCtx.lineTo(6, 17);
     targetCtx.stroke();
 
-    // Black Quarter-Zip Sweatshirt
     targetCtx.strokeStyle = '#000000';
     targetCtx.lineWidth = 3.4;
     targetCtx.fillStyle = '#16161a';
@@ -1308,7 +1324,6 @@ function drawCharacterSprite(targetCtx, charId, facing, walkFrame, isSpinning, s
     targetCtx.fill();
     targetCtx.stroke();
 
-    // Silver Half-Zipper on Chest
     targetCtx.strokeStyle = '#dcdde1';
     targetCtx.lineWidth = 2;
     targetCtx.beginPath();
@@ -1316,7 +1331,6 @@ function drawCharacterSprite(targetCtx, charId, facing, walkFrame, isSpinning, s
     targetCtx.lineTo(3, 2);
     targetCtx.stroke();
 
-    // Face
     targetCtx.strokeStyle = '#000000';
     targetCtx.lineWidth = 3.2;
     targetCtx.fillStyle = '#deb08e';
@@ -1331,7 +1345,6 @@ function drawCharacterSprite(targetCtx, charId, facing, walkFrame, isSpinning, s
     targetCtx.fill();
     targetCtx.stroke();
 
-    // Light Chin Beard & Smile
     targetCtx.fillStyle = '#222';
     targetCtx.beginPath();
     targetCtx.arc(1, -5.5, 5, 0.1 * Math.PI, 0.9 * Math.PI);
@@ -1343,7 +1356,6 @@ function drawCharacterSprite(targetCtx, charId, facing, walkFrame, isSpinning, s
     targetCtx.arc(7, -16, 1.9, 0, Math.PI * 2);
     targetCtx.fill();
 
-    // Short Curly Top Hair
     targetCtx.fillStyle = '#18181c';
     targetCtx.lineWidth = 2.6;
     const topCurls = [
@@ -1357,14 +1369,10 @@ function drawCharacterSprite(targetCtx, charId, facing, walkFrame, isSpinning, s
     }
   }
 
-  // ---------------------------------------------------
-  // 4. YOUSSEF HAMADA (Black Baseball Cap with curly fringe peeking out, mustache & goatee, white tee)
-  // ---------------------------------------------------
   else if (charId === 'youssef_hamada') {
     targetCtx.lineWidth = 3.2;
     targetCtx.strokeStyle = '#000000';
 
-    // White Sneakers
     targetCtx.fillStyle = '#f1f2f6';
     targetCtx.beginPath();
     targetCtx.ellipse(-7 - legSwing * 0.7, 29, 9.5, 5.5, 0, 0, Math.PI * 2);
@@ -1372,7 +1380,6 @@ function drawCharacterSprite(targetCtx, charId, facing, walkFrame, isSpinning, s
     targetCtx.fill();
     targetCtx.stroke();
 
-    // Casual Pants
     targetCtx.fillStyle = '#3d3d45';
     targetCtx.beginPath();
     targetCtx.moveTo(-14, 11);
@@ -1386,14 +1393,12 @@ function drawCharacterSprite(targetCtx, charId, facing, walkFrame, isSpinning, s
     targetCtx.fill();
     targetCtx.stroke();
 
-    // Clean White T-Shirt
     targetCtx.fillStyle = '#ffffff';
     targetCtx.beginPath();
     targetCtx.roundRect(-18, -7, 36, 21, 9);
     targetCtx.fill();
     targetCtx.stroke();
 
-    // Face
     targetCtx.fillStyle = '#d49a72';
     targetCtx.beginPath();
     targetCtx.arc(-14, -14, 4, 0, Math.PI * 2);
@@ -1406,14 +1411,12 @@ function drawCharacterSprite(targetCtx, charId, facing, walkFrame, isSpinning, s
     targetCtx.fill();
     targetCtx.stroke();
 
-    // Eyes
     targetCtx.fillStyle = '#000';
     targetCtx.beginPath();
     targetCtx.arc(-2, -15.5, 1.9, 0, Math.PI * 2);
     targetCtx.arc(7, -15.5, 1.9, 0, Math.PI * 2);
     targetCtx.fill();
 
-    // Mustache & Chin Goatee (from his photo!)
     targetCtx.fillStyle = '#141414';
     targetCtx.beginPath();
     targetCtx.roundRect(-1.5, -11, 8.5, 2.1, 1);
@@ -1422,7 +1425,6 @@ function drawCharacterSprite(targetCtx, charId, facing, walkFrame, isSpinning, s
     targetCtx.arc(2.5, -5.2, 4.4, 0, Math.PI);
     targetCtx.fill();
 
-    // Curly Hair Fringe peeking under the cap
     targetCtx.fillStyle = '#111';
     targetCtx.beginPath();
     targetCtx.arc(-6, -20, 4, 0, Math.PI * 2);
@@ -1430,7 +1432,6 @@ function drawCharacterSprite(targetCtx, charId, facing, walkFrame, isSpinning, s
     targetCtx.arc(6, -20, 3.8, 0, Math.PI * 2);
     targetCtx.fill();
 
-    // Black Baseball Cap + Forward Brim
     targetCtx.lineWidth = 3.2;
     targetCtx.fillStyle = '#18181d';
     targetCtx.beginPath();
@@ -1439,7 +1440,6 @@ function drawCharacterSprite(targetCtx, charId, facing, walkFrame, isSpinning, s
     targetCtx.fill();
     targetCtx.stroke();
 
-    // Cap Visor/Brim pointing forward
     targetCtx.fillStyle = '#111115';
     targetCtx.beginPath();
     targetCtx.roundRect(-2, -23.5, 22, 4.5, 2.5);
@@ -1450,7 +1450,6 @@ function drawCharacterSprite(targetCtx, charId, facing, walkFrame, isSpinning, s
   targetCtx.restore();
 }
 
-// Build Character Selector Cards with Live Previews
 function initCharacterMenu() {
   const grid = document.getElementById('char-grid');
   grid.innerHTML = '';
@@ -1468,12 +1467,12 @@ function initCharacterMenu() {
     }
 
     const previewCanvas = document.createElement('canvas');
-    previewCanvas.width = 76;
-    previewCanvas.height = 88;
+    previewCanvas.width = 72;
+    previewCanvas.height = 82;
     previewCanvas.className = 'char-preview';
     const pCtx = previewCanvas.getContext('2d');
-    pCtx.translate(38, 48);
-    pCtx.scale(1.05, 1.05);
+    pCtx.translate(36, 44);
+    pCtx.scale(0.98, 0.98);
     drawCharacterSprite(pCtx, char.id, 1, 0, false, 0);
 
     const nameEl = document.createElement('div');
@@ -1501,15 +1500,12 @@ function initCharacterMenu() {
   });
 }
 
-// =========================================================================
-// CLASSIC STONE BRICK BACKGROUND & ICY PLATFORMS RENDERER
-// =========================================================================
 function drawBrickBackground(season) {
   ctx.fillStyle = season.brickBg;
   ctx.fillRect(0, 0, W, H);
 
-  const brickW = 68;
-  const brickH = 34;
+  const brickW = 64;
+  const brickH = 32;
   const scrollOffset = (cameraY * 0.45) % (brickH * 2);
 
   for (let row = -2; row < Math.ceil(H / brickH) + 2; row++) {
@@ -1531,16 +1527,13 @@ function drawBrickBackground(season) {
 function draw() {
   const season = SEASONS[currentSeasonIndex];
 
-  // 1. Classic Dark Stone Brick Wall Background
   drawBrickBackground(season);
 
-  // Lightning flash
   if (lightningFlash > 0) {
     ctx.fillStyle = `rgba(255, 255, 255, ${lightningFlash})`;
     ctx.fillRect(0, 0, W, H);
   }
 
-  // 2. Side Tower Pillars
   ctx.fillStyle = season.wallFill;
   ctx.fillRect(0, 0, WALL_WIDTH, H);
   ctx.fillRect(W - WALL_WIDTH, 0, WALL_WIDTH, H);
@@ -1561,7 +1554,6 @@ function draw() {
   ctx.lineTo(W - WALL_WIDTH, H);
   ctx.stroke();
 
-  // 3. Classic Platforms + Wooden Floor Signs
   for (let p of platforms) {
     const drawY = p.y + cameraY;
     if (drawY < -40 || drawY > H + 40) continue;
@@ -1621,7 +1613,6 @@ function draw() {
     }
   }
 
-  // 4. Draw Selected Character
   ctx.save();
   ctx.translate(player.x + player.w / 2, player.y + player.h / 2 + cameraY);
   if (!player.isSpinning) {
@@ -1630,7 +1621,6 @@ function draw() {
   drawCharacterSprite(ctx, selectedCharId, player.facing, player.walkFrame, player.isSpinning, player.spinAngle);
   ctx.restore();
 
-  // 5. Weather Particles
   for (let pt of particles) {
     if (season.id === 'rain' || season.id === 'storm') {
       ctx.strokeStyle = 'rgba(130, 204, 221, 0.7)';
@@ -1660,7 +1650,6 @@ function draw() {
     }
   }
 
-  // 6. Retro Outlined Combo Popups
   for (let ft of floatingTexts) {
     ctx.save();
     ctx.globalAlpha = ft.alpha;
