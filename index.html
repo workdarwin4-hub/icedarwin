@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>ICY TOWER: IM PAID EDITION</title>
+  <title>ICY TOWER CLASSIC: IM PAID</title>
   <style>
     * {
       box-sizing: border-box;
@@ -13,9 +13,9 @@
       padding: 0;
     }
     body {
-      background: #0a0a0c;
+      background: #09090b;
       color: #fff;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: 'Arial Black', 'Segoe UI', Tahoma, sans-serif;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -28,11 +28,11 @@
       max-width: 480px;
       height: 100vh;
       max-height: 850px;
-      background: #111;
-      box-shadow: 0 0 40px rgba(0, 0, 0, 0.9);
+      background: #1a1824;
+      box-shadow: 0 0 50px rgba(0, 0, 0, 0.95);
       overflow: hidden;
-      border-left: 3px solid #222;
-      border-right: 3px solid #222;
+      border-left: 4px solid #000;
+      border-right: 4px solid #000;
     }
     canvas {
       display: block;
@@ -51,36 +51,39 @@
       z-index: 10;
     }
     .hud-box {
-      background: rgba(0, 0, 0, 0.72);
-      border: 2px solid rgba(255, 255, 255, 0.2);
+      background: rgba(15, 14, 22, 0.85);
+      border: 3px solid #000;
+      box-shadow: 0 3px 0 rgba(0,0,0,0.6), inset 0 0 0 1px rgba(255,255,255,0.15);
       border-radius: 10px;
       padding: 6px 12px;
-      backdrop-filter: blur(4px);
     }
     .hud-label {
-      font-size: 11px;
-      color: #aaa;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
+      font-size: 10px;
+      color: #bbb;
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+      font-weight: bold;
     }
     .hud-val {
       font-size: 20px;
       font-weight: 900;
-      color: #fff;
+      color: #ffdd59;
+      text-shadow: 2px 2px 0 #000;
     }
     #weather-badge {
       text-align: center;
-      border-color: #ff4757;
     }
     #weather-name {
-      font-size: 15px;
-      font-weight: 800;
-      color: #ffda79;
+      font-size: 14px;
+      font-weight: 900;
+      color: #fff;
+      text-shadow: 1.5px 1.5px 0 #000;
+      font-family: 'Segoe UI', Tahoma, sans-serif;
     }
     #level-name {
       font-size: 11px;
       color: #ff6b81;
       font-weight: bold;
+      font-family: 'Segoe UI', Tahoma, sans-serif;
     }
     #combo-container {
       position: absolute;
@@ -94,49 +97,51 @@
       transition: opacity 0.2s;
     }
     #combo-text {
-      font-size: 26px;
+      font-size: 28px;
       font-weight: 900;
       color: #ffdd59;
-      text-shadow: 0 3px 0 #000, 0 0 15px rgba(255, 221, 89, 0.8);
+      text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000, 0 4px 0 #000;
       font-style: italic;
     }
     #combo-bar-bg {
-      width: 130px;
-      height: 8px;
-      background: rgba(0,0,0,0.7);
-      border-radius: 4px;
+      width: 136px;
+      height: 10px;
+      background: #000;
+      border-radius: 5px;
       margin: 4px auto 0;
-      overflow: hidden;
-      border: 1px solid #fff;
+      padding: 2px;
     }
     #combo-bar {
       height: 100%;
       width: 100%;
       background: linear-gradient(90deg, #ff4757, #ffdd59);
+      border-radius: 3px;
     }
     #season-banner {
       position: absolute;
-      top: 35%;
+      top: 34%;
       left: 50%;
       transform: translate(-50%, -50%) scale(0.8);
-      background: rgba(0, 0, 0, 0.85);
-      border: 2px solid #fff;
-      padding: 12px 28px;
+      background: #1e1b29;
+      border: 4px solid #000;
+      box-shadow: 0 8px 0 #000, inset 0 0 0 2px #ffdd59;
+      padding: 12px 24px;
       border-radius: 14px;
-      font-size: 24px;
+      font-size: 22px;
       font-weight: 900;
-      color: #fff;
+      color: #ffdd59;
+      text-shadow: 2px 2px 0 #000;
+      font-family: 'Segoe UI', Tahoma, sans-serif;
       pointer-events: none;
       opacity: 0;
-      transition: all 0.35s ease;
+      transition: all 0.3s ease;
       z-index: 15;
       text-align: center;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.8);
     }
     .overlay-screen {
       position: absolute;
       inset: 0;
-      background: rgba(10, 10, 14, 0.88);
+      background: rgba(16, 14, 24, 0.9);
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -144,52 +149,53 @@
       text-align: center;
       padding: 24px;
       z-index: 20;
-      backdrop-filter: blur(6px);
     }
     .hidden {
       display: none !important;
     }
     .game-title {
-      font-size: 36px;
+      font-size: 40px;
       font-weight: 900;
-      letter-spacing: 1px;
-      line-height: 1.1;
-      margin-bottom: 8px;
-      text-transform: uppercase;
+      line-height: 1.05;
+      margin-bottom: 10px;
       color: #fff;
-      text-shadow: 0 4px 0 #e84118;
+      text-shadow: -3px -3px 0 #000, 3px -3px 0 #000, -3px 3px 0 #000, 3px 3px 0 #000, 0 6px 0 #e84118;
     }
     .subtitle {
       font-size: 14px;
-      color: #ccc;
+      color: #ddd;
       margin-bottom: 20px;
       max-width: 320px;
-      line-height: 1.5;
+      line-height: 1.6;
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+      font-weight: bold;
     }
     .btn {
-      background: #e84118;
-      color: #fff;
-      border: none;
-      padding: 14px 36px;
-      font-size: 20px;
+      background: #ffdd59;
+      color: #000;
+      border: 4px solid #000;
+      padding: 12px 38px;
+      font-size: 22px;
       font-weight: 900;
-      border-radius: 12px;
+      border-radius: 14px;
       cursor: pointer;
-      box-shadow: 0 6px 0 #9c2408;
+      box-shadow: 0 6px 0 #000;
       transition: transform 0.1s;
-      margin-top: 10px;
+      font-family: 'Segoe UI', Tahoma, sans-serif;
     }
     .btn:active {
       transform: translateY(4px);
-      box-shadow: 0 2px 0 #9c2408;
+      box-shadow: 0 2px 0 #000;
     }
     .controls-hint {
       margin-top: 22px;
       font-size: 12px;
-      color: #999;
-      background: rgba(255,255,255,0.06);
+      color: #bbb;
+      background: rgba(0,0,0,0.55);
+      border: 2px solid #000;
       padding: 10px 16px;
-      border-radius: 8px;
+      border-radius: 10px;
+      font-family: 'Segoe UI', Tahoma, sans-serif;
     }
     #mobile-controls {
       position: absolute;
@@ -210,27 +216,29 @@
       width: 64px;
       height: 64px;
       border-radius: 50%;
-      background: rgba(255, 255, 255, 0.14);
-      border: 2px solid rgba(255, 255, 255, 0.35);
+      background: rgba(25, 23, 36, 0.78);
+      border: 3px solid #000;
+      box-shadow: 0 4px 0 #000;
       color: #fff;
-      font-size: 24px;
+      font-size: 22px;
       font-weight: bold;
       display: flex;
       justify-content: center;
       align-items: center;
-      backdrop-filter: blur(3px);
       touch-action: manipulation;
     }
     .touch-btn:active {
-      background: rgba(232, 65, 24, 0.6);
-      transform: scale(0.94);
+      background: #ffdd59;
+      color: #000;
+      transform: translateY(3px);
+      box-shadow: 0 1px 0 #000;
     }
     #btn-jump {
       width: 76px;
       height: 76px;
-      background: rgba(232, 65, 24, 0.35);
-      border-color: #ff6b81;
+      background: rgba(232, 65, 24, 0.85);
       font-size: 16px;
+      font-family: 'Segoe UI', Tahoma, sans-serif;
     }
   </style>
 </head>
@@ -244,12 +252,12 @@
     <div class="hud-box">
       <div class="hud-label">السكور</div>
       <div class="hud-val" id="score-val">0</div>
-      <div class="hud-label" style="margin-top:2px;">طابق: <span id="floor-val" style="color:#fff;font-weight:bold;">0</span></div>
+      <div class="hud-label">طابق: <span id="floor-val" style="color:#fff;">0</span></div>
     </div>
 
     <div class="hud-box" id="weather-badge">
       <div id="weather-name">☀️ الصيف الحار</div>
-      <div id="level-name">المستوى 1 - عادي</div>
+      <div id="level-name">صعوبة 1 (عادي)</div>
     </div>
 
     <div class="hud-box" style="text-align:left;">
@@ -269,8 +277,8 @@
 
   <!-- Start Screen -->
   <div id="start-screen" class="overlay-screen">
-    <div class="game-title">ICY TOWER<br><span style="font-size:22px;color:#ffdd59;">IM PAID EDITION</span></div>
-    <p class="subtitle">اطلع البرج لأعلى نقطة! الطقس بيتغير مع الارتفاع (حر ☀️ - خريف 🍂 - مطر 🌧️ - ثلج ❄️) والصعوبة بتزيد كل ما السكور يعلى.</p>
+    <div class="game-title">ICY TOWER<br><span style="font-size:24px;color:#ffdd59;">IM PAID EDITION</span></div>
+    <p class="subtitle">نفس استايل آيس تاور الكلاسيكي! كل ما تطلع أعلى المناخ بيتغير (حر ☀️ - خريف 🍂 - مطر 🌧️ - ثلج ❄️) والصعوبة بتزيد.</p>
     <button class="btn" id="start-btn">ابدأ اللعب</button>
     <div class="controls-hint">
       الكمبيوتر: الأسهم ⬅️ ➡️ للحركة + مسطرة (Space) للقفز<br>
@@ -281,7 +289,7 @@
   <!-- Game Over Screen -->
   <div id="gameover-screen" class="overlay-screen hidden">
     <div class="game-title" style="color:#ff4757;">وقعت!</div>
-    <p class="subtitle" id="final-stats" style="font-size:18px;color:#fff;font-weight:bold;"></p>
+    <p class="subtitle" id="final-stats" style="font-size:18px;color:#fff;"></p>
     <p class="subtitle" id="best-stats" style="color:#ffdd59;"></p>
     <button class="btn" id="restart-btn">العب تاني</button>
   </div>
@@ -302,7 +310,7 @@
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
-// Audio Synthesizer (No external audio files needed)
+// Retro Arcade Sound Synthesizer
 const AudioCtx = window.AudioContext || window.webkitAudioContext;
 let audioCtx = null;
 
@@ -317,43 +325,42 @@ function playSound(type, pitchMod = 1) {
     const now = audioCtx.currentTime;
 
     if (type === 'jump') {
-      osc.type = 'triangle';
-      osc.frequency.setValueAtTime(220 * pitchMod, now);
-      osc.frequency.exponentialRampToValueAtTime(520 * pitchMod, now + 0.14);
-      gain.gain.setValueAtTime(0.18, now);
-      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
+      osc.type = 'square';
+      osc.frequency.setValueAtTime(210 * pitchMod, now);
+      osc.frequency.exponentialRampToValueAtTime(510 * pitchMod, now + 0.13);
+      gain.gain.setValueAtTime(0.12, now);
+      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.14);
       osc.start(now);
-      osc.stop(now + 0.15);
+      osc.stop(now + 0.14);
     } else if (type === 'combo') {
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(400 * pitchMod, now);
-      osc.frequency.setValueAtTime(600 * pitchMod, now + 0.07);
-      osc.frequency.setValueAtTime(850 * pitchMod, now + 0.14);
-      gain.gain.setValueAtTime(0.22, now);
-      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.28);
+      osc.type = 'square';
+      osc.frequency.setValueAtTime(420 * pitchMod, now);
+      osc.frequency.setValueAtTime(630 * pitchMod, now + 0.06);
+      osc.frequency.setValueAtTime(880 * pitchMod, now + 0.12);
+      gain.gain.setValueAtTime(0.14, now);
+      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
       osc.start(now);
-      osc.stop(now + 0.28);
+      osc.stop(now + 0.25);
     } else if (type === 'season') {
       osc.type = 'sawtooth';
-      osc.frequency.setValueAtTime(300, now);
-      osc.frequency.linearRampToValueAtTime(700, now + 0.35);
-      gain.gain.setValueAtTime(0.15, now);
-      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+      osc.frequency.setValueAtTime(280, now);
+      osc.frequency.linearRampToValueAtTime(680, now + 0.3);
+      gain.gain.setValueAtTime(0.14, now);
+      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
       osc.start(now);
-      osc.stop(now + 0.4);
+      osc.stop(now + 0.35);
     } else if (type === 'gameover') {
       osc.type = 'sawtooth';
-      osc.frequency.setValueAtTime(260, now);
-      osc.frequency.linearRampToValueAtTime(75, now + 0.5);
-      gain.gain.setValueAtTime(0.25, now);
-      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.52);
+      osc.frequency.setValueAtTime(240, now);
+      osc.frequency.linearRampToValueAtTime(65, now + 0.45);
+      gain.gain.setValueAtTime(0.2, now);
+      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.48);
       osc.start(now);
-      osc.stop(now + 0.52);
+      osc.stop(now + 0.48);
     }
   } catch (e) {}
 }
 
-// Resize handling
 let W = 480, H = 800;
 function resize() {
   const wrapper = document.getElementById('game-wrapper');
@@ -365,20 +372,21 @@ function resize() {
 window.addEventListener('resize', resize);
 resize();
 
-// Weather & Seasons Configuration
+// Classic Icy Tower Brick Wall & Platform Themes per Weather
 const SEASONS = [
   {
     id: 'summer',
     minFloor: 0,
     name: '☀️ الصيف (جو حر)',
-    banner: '☀️ الصيف الحار - انطلق!',
-    skyTop: '#ff7e5f',
-    skyBottom: '#feb47b',
-    wallColor: '#8d5524',
-    wallTrim: '#c68642',
-    platMain: '#e1b12c',
-    platTop: '#fbc531',
-    platBorder: '#7f5800',
+    banner: '☀️ الصيف الحار - ابدأ الصعود!',
+    brickBg: '#2e241f',
+    brickFill: '#4a382e',
+    brickHighlight: '#634b3e',
+    wallFill: '#5c4332',
+    wallEdge: '#805e46',
+    platBase: '#8c6239',
+    platTop: '#f1c40f',
+    platDrip: '#f39c12',
     friction: 0.84,
     gravity: 0.58
   },
@@ -386,14 +394,15 @@ const SEASONS = [
     id: 'autumn',
     minFloor: 50,
     name: '🍂 الخريف',
-    banner: '🍂 دخلنا الخريف - الهواء اشتد!',
-    skyTop: '#833ab4',
-    skyBottom: '#fd1d1d',
-    wallColor: '#5c2c16',
-    wallTrim: '#a84a1c',
-    platMain: '#d35400',
+    banner: '🍂 دخلنا الخريف - أوراق الشجر!',
+    brickBg: '#261a1d',
+    brickFill: '#3d282c',
+    brickHighlight: '#57393f',
+    wallFill: '#4d2d25',
+    wallEdge: '#734337',
+    platBase: '#6e352c',
     platTop: '#e67e22',
-    platBorder: '#4a1c00',
+    platDrip: '#d35400',
     friction: 0.85,
     gravity: 0.60
   },
@@ -401,53 +410,55 @@ const SEASONS = [
     id: 'rain',
     minFloor: 100,
     name: '🌧️ أمطار غزيرة',
-    banner: '🌧️ الجو بيمطر - خلي بالك من الزحلقة!',
-    skyTop: '#1e272e',
-    skyBottom: '#485460',
-    wallColor: '#2f3640',
-    wallTrim: '#57606f',
-    platMain: '#3c6382',
-    platTop: '#60a3bc',
-    platBorder: '#0a3d62',
-    friction: 0.91, // Slippery wet platforms
+    banner: '🌧️ الجو بيمطر - الأرض مبلولة!',
+    brickBg: '#181c24',
+    brickFill: '#272e3b',
+    brickHighlight: '#364052',
+    wallFill: '#2c3545',
+    wallEdge: '#435169',
+    platBase: '#4b6584',
+    platTop: '#778ca3',
+    platDrip: '#45aaf2',
+    friction: 0.91,
     gravity: 0.62
   },
   {
     id: 'snow',
     minFloor: 150,
     name: '❄️ عاصفة ثلجية',
-    banner: '❄️ تلج! الأرض بتزحلق جامد!',
-    skyTop: '#0c2461',
-    skyBottom: '#82ccdd',
-    wallColor: '#3c6382',
-    wallTrim: '#dff9fb',
-    platMain: '#7ed6df',
+    banner: '❄️ تلج! استايل آيس تاور الأصلي!',
+    brickBg: '#1b1926',
+    brickFill: '#2d2a3e',
+    brickHighlight: '#3f3b57',
+    wallFill: '#35324a',
+    wallEdge: '#524d73',
+    platBase: '#8395a7',
     platTop: '#ffffff',
-    platBorder: '#22a6b3',
-    friction: 0.955, // Very icy!
+    platDrip: '#c8d6e5',
+    friction: 0.955, // Slippery ice!
     gravity: 0.63
   },
   {
     id: 'storm',
     minFloor: 220,
     name: '⚡ عاصفة البرق',
-    banner: '⚡ مستوى الوحوش - البرق والسرعة!',
-    skyTop: '#090910',
-    skyBottom: '#2c1654',
-    wallColor: '#191924',
-    wallTrim: '#8c7ae6',
-    platMain: '#4834d4',
-    platTop: '#be2edd',
-    platBorder: '#130f40',
+    banner: '⚡ مستوى الوحوش - برق وسرعة!',
+    brickBg: '#110e1b',
+    brickFill: '#1e1930',
+    brickHighlight: '#2e264a',
+    wallFill: '#241e38',
+    wallEdge: '#483d70',
+    platBase: '#341f97',
+    platTop: '#a55eea',
+    platDrip: '#8854d0',
     friction: 0.93,
     gravity: 0.66
   }
 ];
 
-// Game State
-let gameState = 'START'; // START, PLAYING, GAMEOVER
+let gameState = 'START';
 let score = 0;
-let bestScore = parseInt(localStorage.getItem('icy_impaid_best') || '0');
+let bestScore = parseInt(localStorage.getItem('icy_classic_impaid_best') || '0');
 document.getElementById('best-val').innerText = bestScore;
 
 let cameraY = 0;
@@ -459,16 +470,16 @@ let particles = [];
 let floatingTexts = [];
 let lightningFlash = 0;
 
-// Player Object (Styled after the character in the photos)
+// Player Object (Chunky Icy Tower Proportions)
 const player = {
   x: W / 2,
-  y: H - 100,
-  w: 38,
-  h: 64,
+  y: H - 110,
+  w: 44,
+  h: 68,
   vx: 0,
   vy: 0,
   grounded: false,
-  facing: 1, // 1 right, -1 left
+  facing: 1,
   spinAngle: 0,
   isSpinning: false,
   lastFloor: 0,
@@ -478,7 +489,6 @@ const player = {
   walkFrame: 0
 };
 
-// Input State
 const keys = { left: false, right: false, jump: false };
 
 window.addEventListener('keydown', (e) => {
@@ -495,7 +505,6 @@ window.addEventListener('keyup', (e) => {
   if (e.code === 'Space' || e.code === 'ArrowUp' || e.code === 'KeyW') keys.jump = false;
 });
 
-// Touch Controls
 function bindTouch(id, keyName, isJump = false) {
   const el = document.getElementById(id);
   el.addEventListener('touchstart', (e) => {
@@ -521,12 +530,11 @@ bindTouch('btn-jump', 'jump', true);
 function triggerJump() {
   if (gameState !== 'PLAYING') return;
   if (player.grounded) {
-    // Classic Icy Tower physics: horizontal speed boosts jump height!
-    const speedBonus = Math.abs(player.vx) * 0.68;
-    player.vy = -(12.8 + speedBonus);
+    const speedBonus = Math.abs(player.vx) * 0.7;
+    player.vy = -(13.0 + speedBonus);
     player.grounded = false;
 
-    if (Math.abs(player.vx) > 5.8) {
+    if (Math.abs(player.vx) > 5.6) {
       player.isSpinning = true;
       player.spinAngle = 0;
       playSound('jump', 1.35);
@@ -537,27 +545,26 @@ function triggerJump() {
   }
 }
 
-const WALL_WIDTH = 26;
+const WALL_WIDTH = 28;
 const FLOOR_GAP = 95;
 
 function createPlatform(floorNum) {
-  const y = H - 50 - floorNum * FLOOR_GAP;
+  const y = H - 55 - floorNum * FLOOR_GAP;
   if (floorNum === 0) {
     return {
       floor: 0,
       x: WALL_WIDTH,
       y: y,
       w: W - WALL_WIDTH * 2,
-      h: 22,
+      h: 24,
       vx: 0,
       isMilestone: true
     };
   }
 
-  // Difficulty shrinks platforms as floor increases
   const shrink = Math.min(95, floorNum * 0.35);
-  const minW = Math.max(78, 135 - shrink);
-  const maxW = Math.max(115, 220 - shrink);
+  const minW = Math.max(82, 140 - shrink);
+  const maxW = Math.max(120, 225 - shrink);
   const isMilestone = floorNum % 50 === 0;
 
   const w = isMilestone ? (W - WALL_WIDTH * 2) : (minW + Math.random() * (maxW - minW));
@@ -565,25 +572,24 @@ function createPlatform(floorNum) {
   const maxX = W - WALL_WIDTH - w - 6;
   const x = isMilestone ? WALL_WIDTH : (minX + Math.random() * Math.max(10, maxX - minX));
 
-  // Moving platforms appear more at higher levels
   let vx = 0;
   if (!isMilestone && floorNum > 25 && Math.random() < Math.min(0.45, floorNum / 400)) {
     vx = (Math.random() < 0.5 ? -1 : 1) * (1.2 + Math.min(3.2, floorNum / 90));
   }
 
-  return { floor: floorNum, x, y, w, h: 18, vx, isMilestone };
+  return { floor: floorNum, x, y, w, h: 20, vx, isMilestone };
 }
 
 function initParticles(seasonId) {
   particles = [];
-  const count = seasonId === 'rain' ? 90 : (seasonId === 'snow' ? 75 : (seasonId === 'autumn' ? 28 : 18));
+  const count = seasonId === 'rain' || seasonId === 'storm' ? 95 : (seasonId === 'snow' ? 80 : (seasonId === 'autumn' ? 28 : 16));
   for (let i = 0; i < count; i++) {
     particles.push({
       x: Math.random() * W,
       y: Math.random() * H,
-      speedY: seasonId === 'rain' ? (10 + Math.random() * 6) : (1.5 + Math.random() * 2.5),
-      speedX: seasonId === 'rain' ? -2 : (Math.random() * 2 - 1),
-      size: seasonId === 'rain' ? 12 : (3 + Math.random() * 4),
+      speedY: (seasonId === 'rain' || seasonId === 'storm') ? (11 + Math.random() * 6) : (1.5 + Math.random() * 2.5),
+      speedX: (seasonId === 'rain' || seasonId === 'storm') ? -2 : (Math.random() * 2 - 1),
+      size: (seasonId === 'rain' || seasonId === 'storm') ? 13 : (3 + Math.random() * 4),
       angle: Math.random() * Math.PI * 2
     });
   }
@@ -614,7 +620,7 @@ function resetGame() {
   }
 
   player.x = W / 2 - player.w / 2;
-  player.y = H - 50 - player.h;
+  player.y = H - 55 - player.h;
   player.vx = 0;
   player.vy = 0;
   player.grounded = true;
@@ -641,7 +647,6 @@ document.getElementById('start-btn').addEventListener('click', startGame);
 document.getElementById('restart-btn').addEventListener('click', startGame);
 
 function updateSeasonAndDifficulty() {
-  // Check Season by floor
   let newSeasonIdx = 0;
   for (let i = SEASONS.length - 1; i >= 0; i--) {
     if (player.lastFloor >= SEASONS[i].minFloor) {
@@ -655,8 +660,6 @@ function updateSeasonAndDifficulty() {
     showBanner(SEASONS[currentSeasonIndex].banner);
     playSound('season');
   }
-
-  // Difficulty scales smoothly with score
   difficultyLevel = 1 + Math.floor(score / 1500);
 }
 
@@ -667,7 +670,7 @@ function updateHUD() {
 
   const diffLabels = ['عادي', 'متوسط', 'سريع', 'صعب', 'جنوني', 'مستحيل'];
   const label = diffLabels[Math.min(diffLabels.length - 1, difficultyLevel - 1)];
-  document.getElementById('level-name').innerText = `مستوى الصعوبة ${difficultyLevel} (${label})`;
+  document.getElementById('level-name').innerText = `صعوبة ${difficultyLevel} (${label})`;
 
   const comboBox = document.getElementById('combo-container');
   if (player.comboCount >= 2 && player.comboTimer > 0) {
@@ -687,8 +690,6 @@ function update() {
   if (gameState !== 'PLAYING') return;
 
   const season = SEASONS[currentSeasonIndex];
-
-  // Horizontal movement
   const accel = player.grounded ? (season.id === 'snow' ? 0.55 : 0.95) : 0.72;
   const maxSpeed = 8.8;
 
@@ -711,7 +712,7 @@ function update() {
 
   player.x += player.vx;
 
-  // Wall bounce (Classic Icy Tower wall-kick mechanic!)
+  // Wall bounce
   if (player.x < WALL_WIDTH) {
     player.x = WALL_WIDTH;
     player.vx = Math.abs(player.vx) * 0.85;
@@ -722,7 +723,6 @@ function update() {
     player.facing = -1;
   }
 
-  // Gravity & Vertical Movement
   const prevBottom = player.y + player.h;
   player.vy += season.gravity;
   player.y += player.vy;
@@ -734,12 +734,11 @@ function update() {
   }
 
   if (player.grounded && Math.abs(player.vx) > 0.5) {
-    player.walkFrame += Math.abs(player.vx) * 0.05;
+    player.walkFrame += Math.abs(player.vx) * 0.055;
   } else {
     player.walkFrame = 0;
   }
 
-  // Move moving platforms
   for (let p of platforms) {
     if (p.vx !== 0) {
       p.x += p.vx;
@@ -749,7 +748,6 @@ function update() {
     }
   }
 
-  // Platform collision (only when falling)
   player.grounded = false;
   if (player.vy >= 0) {
     for (let p of platforms) {
@@ -760,9 +758,8 @@ function update() {
         player.vy = 0;
         player.grounded = true;
         player.isSpinning = false;
-        player.x += p.vx; // Carry player on moving platforms
+        player.x += p.vx;
 
-        // Floor & Combo Scoring
         if (p.floor > player.lastFloor) {
           const jumpedFloors = p.floor - player.lastFloor;
           if (jumpedFloors >= 2) {
@@ -773,13 +770,10 @@ function update() {
 
             const cheers = ['SWEET!', 'GOOD!', 'GREAT!', 'SUPER!', 'IM PAID! 🔥'];
             const word = cheers[Math.min(cheers.length - 1, Math.floor(player.comboCount / 3))];
-            addFloatingText(`${word} +${bonus}`, player.x + player.w / 2, player.y - 15, '#ffdd59');
+            addFloatingText(`${word} +${bonus}`, player.x + player.w / 2, player.y - 18, '#ffdd59');
             playSound('combo', 1 + Math.min(0.6, player.comboCount * 0.04));
           } else {
-            // Single floor step
-            if (player.comboCount >= 2) {
-              finishCombo();
-            }
+            if (player.comboCount >= 2) finishCombo();
             score += 10;
           }
           player.lastFloor = p.floor;
@@ -790,23 +784,17 @@ function update() {
     }
   }
 
-  // Combo timer countdown
   if (player.comboTimer > 0) {
     player.comboTimer--;
-    if (player.comboTimer <= 0 && player.comboCount >= 2) {
-      finishCombo();
-    }
+    if (player.comboTimer <= 0 && player.comboCount >= 2) finishCombo();
   }
 
-  // Camera scrolling
   if (player.lastFloor >= 1) {
-    // Base scroll speed increases with floor and score
     const targetAutoSpeed = 0.85 + Math.min(3.6, (player.lastFloor * 0.012) + (score * 0.00012));
     autoScrollSpeed += (targetAutoSpeed - autoScrollSpeed) * 0.02;
     cameraY += autoScrollSpeed;
   }
 
-  // Keep player in upper 38% of screen if jumping fast
   const screenY = player.y + cameraY;
   if (screenY < H * 0.36) {
     const diff = (H * 0.36) - screenY;
@@ -814,46 +802,33 @@ function update() {
     score += Math.floor(diff * 0.25);
   }
 
-  // Generate new platforms above
   let highestFloor = platforms[platforms.length - 1].floor;
-  while (H - 50 - highestFloor * FLOOR_GAP + cameraY > -200) {
+  while (H - 55 - highestFloor * FLOOR_GAP + cameraY > -200) {
     highestFloor++;
     platforms.push(createPlatform(highestFloor));
   }
 
-  // Remove old platforms far below
   platforms = platforms.filter(p => (p.y + cameraY) < H + 120);
 
-  // Weather Particles Update
   for (let pt of particles) {
     pt.y += pt.speedY;
     pt.x += pt.speedX + Math.sin(pt.angle) * 0.5;
     pt.angle += 0.04;
-    if (pt.y > H) {
-      pt.y = -10;
-      pt.x = Math.random() * W;
-    }
+    if (pt.y > H) { pt.y = -10; pt.x = Math.random() * W; }
     if (pt.x < 0) pt.x = W;
     if (pt.x > W) pt.x = 0;
   }
 
-  // Lightning effect in Storm season
-  if (season.id === 'storm' && Math.random() < 0.004) {
-    lightningFlash = 0.75;
-  }
+  if (season.id === 'storm' && Math.random() < 0.004) lightningFlash = 0.75;
   if (lightningFlash > 0) lightningFlash -= 0.05;
 
-  // Floating texts
   for (let ft of floatingTexts) {
     ft.y += ft.vy;
     ft.alpha -= 0.018;
   }
   floatingTexts = floatingTexts.filter(ft => ft.alpha > 0);
 
-  // Game Over Check (Fell below bottom of screen)
-  if (player.y + cameraY > H + 20) {
-    triggerGameOver();
-  }
+  if (player.y + cameraY > H + 20) triggerGameOver();
 
   updateHUD();
 }
@@ -871,7 +846,7 @@ function triggerGameOver() {
   playSound('gameover');
   if (score > bestScore) {
     bestScore = score;
-    localStorage.setItem('icy_impaid_best', bestScore);
+    localStorage.setItem('icy_classic_impaid_best', bestScore);
     document.getElementById('best-val').innerText = bestScore;
   }
   document.getElementById('final-stats').innerText = `السكور: ${score} | وصلت للطابق: ${player.lastFloor}`;
@@ -879,10 +854,10 @@ function triggerGameOver() {
   document.getElementById('gameover-screen').classList.remove('hidden');
 }
 
-// ==========================================
-// CUSTOM CHARACTER RENDERER (From User Photo)
-// ==========================================
-function drawCustomCharacter(ctx, p) {
+// =========================================================================
+// CLASSIC ICY TOWER CHARACTER STYLE + USER OUTFIT ("F*CK IT IM PAID")
+// =========================================================================
+function drawIcyStyleCharacter(ctx, p) {
   ctx.save();
   const centerX = p.x + p.w / 2;
   const centerY = p.y + p.h / 2;
@@ -891,247 +866,336 @@ function drawCustomCharacter(ctx, p) {
   if (p.isSpinning) {
     ctx.rotate(p.spinAngle);
   } else {
-    // Slight tilt when moving
-    ctx.rotate(p.vx * 0.025);
+    ctx.rotate(p.vx * 0.02);
   }
 
-  // Flip horizontally based on facing direction
+  // Flip horizontally according to movement direction
   ctx.scale(p.facing, 1);
 
-  const legSwing = Math.sin(p.walkFrame) * 5;
+  const legSwing = Math.sin(p.walkFrame) * 4.5;
+  ctx.lineJoin = 'round';
+  ctx.lineCap = 'round';
 
-  // 1. White Sneakers (Off-white chunky skate shoes from photo)
-  ctx.fillStyle = '#e8e4d8';
-  ctx.strokeStyle = '#222';
-  ctx.lineWidth = 1.5;
-  // Back shoe
-  ctx.beginPath();
-  ctx.roundRect(-12 - legSwing, 23, 12, 8, 3);
-  ctx.fill();
-  ctx.stroke();
-  // Front shoe
-  ctx.beginPath();
-  ctx.roundRect(1 + legSwing, 23, 13, 8, 3);
-  ctx.fill();
-  ctx.stroke();
+  // --- 1. CHUNKY WHITE SNEAKERS (With thick black outline like Harold's shoes) ---
+  ctx.lineWidth = 3.2;
+  ctx.strokeStyle = '#000000';
 
-  // 2. Wide Grey Washed Baggy Cargo Pants
-  ctx.fillStyle = '#5c5f63';
-  ctx.strokeStyle = '#2b2d30';
-  ctx.lineWidth = 1.5;
-  // Left leg
+  // Back sneaker
+  ctx.fillStyle = '#dcd7c9';
   ctx.beginPath();
-  ctx.roundRect(-13 - legSwing * 0.5, 4, 13, 21, 3);
-  ctx.fill();
-  ctx.stroke();
-  // Right leg
-  ctx.beginPath();
-  ctx.roundRect(0 + legSwing * 0.5, 4, 14, 21, 3);
+  ctx.ellipse(-7 - legSwing * 0.7, 29, 9.5, 5.5, 0, 0, Math.PI * 2);
   ctx.fill();
   ctx.stroke();
 
-  // Cargo pocket & hanging straps detail
-  ctx.fillStyle = '#4a4d50';
-  ctx.fillRect(3 + legSwing * 0.5, 9, 8, 9);
-  ctx.strokeStyle = '#7f8388';
-  ctx.lineWidth = 1.2;
+  // Front sneaker
+  ctx.fillStyle = '#f2efe9';
   ctx.beginPath();
-  ctx.moveTo(6 + legSwing * 0.5, 18);
-  ctx.lineTo(4 + legSwing * 0.5, 25);
-  ctx.stroke();
-
-  // 3. Oversized Black Hoodie
-  ctx.fillStyle = '#111113';
-  ctx.strokeStyle = '#000';
-  ctx.lineWidth = 1.5;
-  ctx.beginPath();
-  ctx.roundRect(-17, -17, 34, 24, 7);
+  ctx.ellipse(8 + legSwing * 0.7, 29, 10, 5.5, 0, 0, Math.PI * 2);
   ctx.fill();
   ctx.stroke();
 
-  // Hoodie Text: "F*CK IT / IM PAID" in bold white condensed print
-  ctx.save();
-  ctx.scale(p.facing, 1); // Keep text readable regardless of facing direction!
-  ctx.fillStyle = '#ffffff';
-  ctx.font = '900 6.2px Arial Black, sans-serif';
-  ctx.textAlign = 'center';
-  ctx.fillText('F*CK IT', 0, -8);
-  ctx.fillText('IM PAID', 0, 0.5);
-  ctx.restore();
-
-  // 4. Face / Skin
-  ctx.fillStyle = '#d8a482';
+  // --- 2. WIDE BAGGY GREY CARGO PANTS (Harold's wide stance + cargo pockets) ---
+  ctx.fillStyle = '#5d6166';
   ctx.beginPath();
-  ctx.arc(1, -22, 8.5, 0, Math.PI * 2);
-  ctx.fill();
-
-  // Mouth / neutral cool expression
-  ctx.strokeStyle = '#8c583a';
-  ctx.lineWidth = 1.2;
-  ctx.beginPath();
-  ctx.moveTo(1, -18);
-  ctx.lineTo(6, -18);
-  ctx.stroke();
-
-  // 5. Black Beanie with White Alien Logo
-  ctx.fillStyle = '#0d0d0f';
-  ctx.beginPath();
-  ctx.arc(0, -25, 9.5, Math.PI, 0);
-  ctx.lineTo(9.5, -22);
-  ctx.lineTo(-9.5, -22);
+  ctx.moveTo(-15, 11);
+  ctx.lineTo(15, 11);
+  ctx.lineTo(17 + legSwing * 0.5, 26);
+  ctx.lineTo(3 + legSwing * 0.5, 26);
+  ctx.lineTo(0, 19);
+  ctx.lineTo(-3 - legSwing * 0.5, 26);
+  ctx.lineTo(-16 - legSwing * 0.5, 26);
   ctx.closePath();
   ctx.fill();
-
-  // White Alien Emblem on Beanie cuff
-  ctx.strokeStyle = '#ffffff';
-  ctx.lineWidth = 1.2;
-  ctx.beginPath();
-  ctx.ellipse(2, -24.5, 2.5, 3.2, 0, 0, Math.PI * 2);
   ctx.stroke();
-  ctx.fillStyle = '#ffffff';
-  ctx.fillRect(1, -25, 1, 1);
-  ctx.fillRect(3, -25, 1, 1);
 
-  // 6. Signature White-Framed Wrap-Around Sunglasses
+  // Cargo pocket & strap detail on leg
+  ctx.lineWidth = 1.8;
+  ctx.fillStyle = '#4a4e52';
+  ctx.fillRect(5 + legSwing * 0.4, 15, 7, 7);
+  ctx.strokeRect(5 + legSwing * 0.4, 15, 7, 7);
+
+  // --- 3. ROUNDED BLACK HOODIE (Hands in pockets pose like Harold) ---
+  ctx.lineWidth = 3.4;
+  ctx.fillStyle = '#151518';
+  ctx.beginPath();
+  ctx.roundRect(-19, -7, 38, 22, 11);
+  ctx.fill();
+  ctx.stroke();
+
+  // Subtle hoodie pocket/arm crease lines (hands tucked inside)
+  ctx.lineWidth = 2;
+  ctx.strokeStyle = '#2c2c33';
+  ctx.beginPath();
+  ctx.arc(-11, 5, 5, 0.3, 2.2);
+  ctx.stroke();
+
+  // Bold White Text "F*CK IT / IM PAID" on chest (kept unflipped so it's always readable!)
+  ctx.save();
+  ctx.scale(p.facing, 1);
+  ctx.fillStyle = '#ffffff';
+  ctx.font = '900 6.5px Arial Black, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('F*CK IT', 0, 1.5);
+  ctx.fillText('IM PAID', 0, 9.5);
+  ctx.restore();
+
+  // --- 4. CARTOON HEAD, EARS, BIG NOSE & WIDE SMIRK (Classic Harold Face) ---
+  ctx.lineWidth = 3.2;
+  ctx.strokeStyle = '#000000';
+  ctx.fillStyle = '#e09f70';
+
+  // Left & Right Ears sticking out under beanie
+  ctx.beginPath();
+  ctx.arc(-16, -13, 4.2, 0, Math.PI * 2);
+  ctx.arc(16, -13, 4.2, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.stroke();
+
+  // Lower Face Jaw/Cheeks
+  ctx.beginPath();
+  ctx.ellipse(0, -12, 15, 10, 0, 0, Math.PI);
+  ctx.fill();
+  ctx.stroke();
+
+  // Wide Classic Icy Tower Smile/Smirk
+  ctx.lineWidth = 2.4;
+  ctx.beginPath();
+  ctx.arc(1, -12, 9.5, 0.18 * Math.PI, 0.82 * Math.PI);
+  ctx.stroke();
+
+  // Round Cartoon Nose
+  ctx.lineWidth = 2.4;
+  ctx.fillStyle = '#e09f70';
+  ctx.beginPath();
+  ctx.ellipse(3, -12.5, 4.8, 3.2, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.stroke();
+
+  // --- 5. WHITE WRAP-AROUND SUNGLASSES (Peeking right under the beanie) ---
+  ctx.lineWidth = 2.2;
   ctx.fillStyle = '#ffffff';
   ctx.beginPath();
-  ctx.roundRect(-2, -23.5, 12, 4.8, 2);
+  ctx.roundRect(-4, -18.5, 17, 5.5, 2.5);
   ctx.fill();
-  // Dark lenses inside white frame
+  ctx.stroke();
+
+  // Dark lenses
   ctx.fillStyle = '#111111';
   ctx.beginPath();
-  ctx.roundRect(-0.5, -22.5, 4.5, 2.8, 1);
-  ctx.roundRect(5, -22.5, 4.5, 2.8, 1);
+  ctx.roundRect(-2, -17.3, 6, 3.2, 1);
+  ctx.roundRect(5.5, -17.3, 6, 3.2, 1);
   ctx.fill();
 
+  // --- 6. TALL SLOUCHY BLACK BEANIE + ALIEN PIN (Harold's exact hat silhouette!) ---
+  ctx.lineWidth = 3.4;
+  ctx.strokeStyle = '#000000';
+  ctx.fillStyle = '#141418';
+
+  // Tall slouchy upper crown
+  ctx.beginPath();
+  ctx.moveTo(-15, -21);
+  ctx.quadraticCurveTo(-15, -38, -6, -38);
+  ctx.lineTo(6, -38);
+  ctx.quadraticCurveTo(15, -38, 15, -21);
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+
+  // Folded ribbed cuff pulled down over brow
+  ctx.fillStyle = '#1d1d24';
+  ctx.beginPath();
+  ctx.roundRect(-17.5, -24, 35, 8.5, 4);
+  ctx.fill();
+  ctx.stroke();
+
+  // Alien Logo Pin on cuff (replacing Harold's paw pin)
+  ctx.lineWidth = 1.5;
+  ctx.fillStyle = '#ffffff';
+  ctx.beginPath();
+  ctx.ellipse(-9, -19.8, 3.2, 3.8, 0, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.stroke();
+  // Alien eyes
+  ctx.fillStyle = '#000';
+  ctx.fillRect(-10.5, -20.5, 1.2, 1.5);
+  ctx.fillRect(-8.3, -20.5, 1.2, 1.5);
+
   ctx.restore();
+}
+
+// =========================================================================
+// CLASSIC STONE BRICK BACKGROUND & ICY PLATFORMS RENDERER
+// =========================================================================
+function drawBrickBackground(season) {
+  ctx.fillStyle = season.brickBg;
+  ctx.fillRect(0, 0, W, H);
+
+  const brickW = 68;
+  const brickH = 34;
+  const scrollOffset = (cameraY * 0.45) % (brickH * 2);
+
+  for (let row = -2; row < Math.ceil(H / brickH) + 2; row++) {
+    const y = row * brickH + scrollOffset;
+    const isOdd = Math.abs(row) % 2 === 1;
+    const xStart = isOdd ? -brickW / 2 : 0;
+
+    for (let x = xStart; x < W; x += brickW) {
+      // Main stone block
+      ctx.fillStyle = season.brickFill;
+      ctx.fillRect(x + 2, y + 2, brickW - 4, brickH - 4);
+
+      // Subtle top/left stone bevel highlight (just like the reference image)
+      ctx.fillStyle = season.brickHighlight;
+      ctx.fillRect(x + 2, y + 2, brickW - 4, 3);
+      ctx.fillRect(x + 2, y + 2, 3, brickH - 4);
+    }
+  }
 }
 
 function draw() {
   const season = SEASONS[currentSeasonIndex];
 
-  // Sky Gradient
-  const grad = ctx.createLinearGradient(0, 0, 0, H);
-  grad.addColorStop(0, season.skyTop);
-  grad.addColorStop(1, season.skyBottom);
-  ctx.fillStyle = grad;
-  ctx.fillRect(0, 0, W, H);
+  // 1. Classic Dark Stone Brick Wall Background
+  drawBrickBackground(season);
 
-  // Sun / Moon ambient background element
-  if (season.id === 'summer') {
-    ctx.fillStyle = 'rgba(255, 240, 150, 0.35)';
-    ctx.beginPath();
-    ctx.arc(W - 85, 110, 48, 0, Math.PI * 2);
-    ctx.fill();
-  } else if (season.id === 'snow' || season.id === 'storm') {
-    ctx.fillStyle = 'rgba(220, 240, 255, 0.18)';
-    ctx.beginPath();
-    ctx.arc(85, 120, 36, 0, Math.PI * 2);
-    ctx.fill();
-  }
-
-  // Lightning flash
+  // Lightning flash during Storm
   if (lightningFlash > 0) {
     ctx.fillStyle = `rgba(255, 255, 255, ${lightningFlash})`;
     ctx.fillRect(0, 0, W, H);
   }
 
-  // Side Tower Walls (Scrolling bricks)
-  ctx.fillStyle = season.wallColor;
+  // 2. Side Tower Pillars with Thick Black Outline
+  ctx.fillStyle = season.wallFill;
   ctx.fillRect(0, 0, WALL_WIDTH, H);
   ctx.fillRect(W - WALL_WIDTH, 0, WALL_WIDTH, H);
 
-  ctx.fillStyle = season.wallTrim;
-  const brickOffset = cameraY % 40;
-  for (let y = brickOffset - 40; y < H; y += 40) {
-    ctx.fillRect(0, y, WALL_WIDTH - 4, 4);
-    ctx.fillRect(W - WALL_WIDTH + 4, y + 20, WALL_WIDTH - 4, 4);
+  ctx.fillStyle = season.wallEdge;
+  const pillarOffset = cameraY % 48;
+  for (let y = pillarOffset - 48; y < H; y += 48) {
+    ctx.fillRect(2, y, WALL_WIDTH - 6, 6);
+    ctx.fillRect(W - WALL_WIDTH + 4, y + 24, WALL_WIDTH - 6, 6);
   }
 
-  // Platforms
+  ctx.strokeStyle = '#000';
+  ctx.lineWidth = 3.5;
+  ctx.beginPath();
+  ctx.moveTo(WALL_WIDTH, 0);
+  ctx.lineTo(WALL_WIDTH, H);
+  ctx.moveTo(W - WALL_WIDTH, 0);
+  ctx.lineTo(W - WALL_WIDTH, H);
+  ctx.stroke();
+
+  // 3. Classic Icy/Textured Platforms + Wooden Floor Sign (Like the "150" sign!)
   for (let p of platforms) {
     const drawY = p.y + cameraY;
-    if (drawY < -30 || drawY > H + 30) continue;
+    if (drawY < -40 || drawY > H + 40) continue;
 
-    // Platform shadow
-    ctx.fillStyle = 'rgba(0,0,0,0.35)';
+    ctx.lineJoin = 'round';
+    ctx.lineWidth = 3;
+    ctx.strokeStyle = '#000000';
+
+    // Stone/Ice Base Block
+    ctx.fillStyle = p.isMilestone ? '#27ae60' : season.platBase;
     ctx.beginPath();
-    ctx.roundRect(p.x + 3, drawY + 4, p.w, p.h, 6);
+    ctx.roundRect(p.x, drawY + 4, p.w, p.h - 4, 5);
     ctx.fill();
-
-    // Platform main body
-    ctx.fillStyle = p.isMilestone ? '#2ed573' : season.platMain;
-    ctx.beginPath();
-    ctx.roundRect(p.x, drawY, p.w, p.h, 6);
-    ctx.fill();
-
-    // Top weather layer (Snow cap, grass, or shiny ice)
-    ctx.fillStyle = p.isMilestone ? '#7bed9f' : season.platTop;
-    ctx.beginPath();
-    ctx.roundRect(p.x, drawY, p.w, 6, [6, 6, 0, 0]);
-    ctx.fill();
-
-    ctx.strokeStyle = season.platBorder;
-    ctx.lineWidth = 1.5;
-    ctx.beginPath();
-    ctx.roundRect(p.x, drawY, p.w, p.h, 6);
     ctx.stroke();
 
-    // Floor number badge every 10 floors
+    // Jagged Icicle / Weather Top Layer
+    ctx.fillStyle = p.isMilestone ? '#2ecc71' : season.platTop;
+    ctx.beginPath();
+    ctx.moveTo(p.x, drawY + 6);
+    ctx.lineTo(p.x, drawY);
+    ctx.lineTo(p.x + p.w, drawY);
+    ctx.lineTo(p.x + p.w, drawY + 6);
+
+    // Jagged icicle teeth along the bottom edge of the top layer
+    const toothWidth = 10;
+    for (let tx = p.x + p.w; tx > p.x; tx -= toothWidth) {
+      const nextX = Math.max(p.x, tx - toothWidth);
+      const midX = (tx + nextX) / 2;
+      ctx.lineTo(midX, drawY + 12);
+      ctx.lineTo(nextX, drawY + 6);
+    }
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+
+    // Wooden Floor Sign Hanging Under Milestone Floors (Every 10 floors, exact "150" style)
     if (p.floor > 0 && p.floor % 10 === 0) {
-      ctx.fillStyle = '#000';
+      const signW = 44;
+      const signH = 18;
+      const signX = p.x + p.w / 2 - signW / 2;
+      const signY = drawY + p.h - 1;
+
+      ctx.fillStyle = '#784820';
+      ctx.lineWidth = 2.5;
       ctx.beginPath();
-      ctx.roundRect(p.x + p.w / 2 - 20, drawY + 2, 40, 14, 4);
+      ctx.roundRect(signX, signY, signW, signH, 3);
       ctx.fill();
-      ctx.fillStyle = '#fff';
-      ctx.font = 'bold 10px sans-serif';
+      ctx.stroke();
+
+      // Wood grain line
+      ctx.strokeStyle = '#523014';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(signX + 3, signY + 6);
+      ctx.lineTo(signX + signW - 3, signY + 6);
+      ctx.stroke();
+
+      // Crisp white number
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 11px Arial, sans-serif';
       ctx.textAlign = 'center';
-      ctx.fillText(p.floor, p.x + p.w / 2, drawY + 12);
+      ctx.fillText(p.floor, signX + signW / 2, signY + 13);
     }
   }
 
-  // Draw Custom Player
+  // 4. Draw Custom Icy-Tower-Styled Character
   ctx.save();
   ctx.translate(0, cameraY);
-  drawCustomCharacter(ctx, player);
+  drawIcyStyleCharacter(ctx, player);
   ctx.restore();
 
-  // Draw Weather Particles (Rain / Snow / Autumn Leaves / Sun Dust)
+  // 5. Weather Particles
   for (let pt of particles) {
     if (season.id === 'rain' || season.id === 'storm') {
-      ctx.strokeStyle = 'rgba(174, 214, 241, 0.65)';
-      ctx.lineWidth = 1.5;
+      ctx.strokeStyle = 'rgba(130, 204, 221, 0.7)';
+      ctx.lineWidth = 1.8;
       ctx.beginPath();
       ctx.moveTo(pt.x, pt.y);
       ctx.lineTo(pt.x - 3, pt.y + pt.size);
       ctx.stroke();
     } else if (season.id === 'snow') {
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
+      ctx.fillStyle = '#ffffff';
       ctx.beginPath();
-      ctx.arc(pt.x, pt.y, pt.size * 0.6, 0, Math.PI * 2);
+      ctx.arc(pt.x, pt.y, pt.size * 0.55, 0, Math.PI * 2);
       ctx.fill();
     } else if (season.id === 'autumn') {
-      ctx.fillStyle = '#f39c12';
+      ctx.fillStyle = '#e67e22';
+      ctx.strokeStyle = '#000';
+      ctx.lineWidth = 1;
       ctx.beginPath();
       ctx.ellipse(pt.x, pt.y, pt.size, pt.size * 0.5, pt.angle, 0, Math.PI * 2);
       ctx.fill();
+      ctx.stroke();
     } else {
-      // Summer warm floating particles
-      ctx.fillStyle = 'rgba(255, 255, 200, 0.35)';
+      ctx.fillStyle = 'rgba(255, 221, 89, 0.45)';
       ctx.beginPath();
-      ctx.arc(pt.x, pt.y, pt.size * 0.4, 0, Math.PI * 2);
+      ctx.arc(pt.x, pt.y, pt.size * 0.45, 0, Math.PI * 2);
       ctx.fill();
     }
   }
 
-  // Floating Combo Texts
+  // 6. Retro Outlined Combo Popups
   for (let ft of floatingTexts) {
     ctx.save();
     ctx.globalAlpha = ft.alpha;
-    ctx.font = '900 20px Arial Black, sans-serif';
+    ctx.font = '900 22px Arial Black, sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillStyle = '#000';
-    ctx.fillText(ft.text, ft.x + 2, ft.y + cameraY + 2);
+    ctx.lineWidth = 4;
+    ctx.strokeStyle = '#000';
+    ctx.strokeText(ft.text, ft.x, ft.y + cameraY);
     ctx.fillStyle = ft.color;
     ctx.fillText(ft.text, ft.x, ft.y + cameraY);
     ctx.restore();
@@ -1144,7 +1208,6 @@ function loop() {
   requestAnimationFrame(loop);
 }
 
-// Initial background draw
 resetGame();
 loop();
 </script>
