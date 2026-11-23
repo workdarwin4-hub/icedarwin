@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>ICY TOWER CLASSIC: IM PAID</title>
+  <title>ICY TOWER CLASSIC: DARWIN & CREW</title>
   <style>
     * {
       box-sizing: border-box;
@@ -41,21 +41,22 @@
     }
     #hud {
       position: absolute;
-      top: 12px;
-      left: 12px;
-      right: 12px;
+      top: 10px;
+      left: 10px;
+      right: 10px;
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
       pointer-events: none;
       z-index: 10;
+      gap: 6px;
     }
     .hud-box {
-      background: rgba(15, 14, 22, 0.85);
+      background: rgba(15, 14, 22, 0.88);
       border: 3px solid #000;
       box-shadow: 0 3px 0 rgba(0,0,0,0.6), inset 0 0 0 1px rgba(255,255,255,0.15);
       border-radius: 10px;
-      padding: 6px 12px;
+      padding: 5px 10px;
     }
     .hud-label {
       font-size: 10px;
@@ -64,30 +65,39 @@
       font-weight: bold;
     }
     .hud-val {
-      font-size: 20px;
+      font-size: 19px;
       font-weight: 900;
       color: #ffdd59;
       text-shadow: 2px 2px 0 #000;
     }
     #weather-badge {
       text-align: center;
+      flex: 1;
+    }
+    #active-char-hud {
+      font-size: 12px;
+      font-weight: 900;
+      color: #2ed573;
+      text-shadow: 1.5px 1.5px 0 #000;
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+      margin-bottom: 1px;
     }
     #weather-name {
-      font-size: 14px;
+      font-size: 13px;
       font-weight: 900;
       color: #fff;
       text-shadow: 1.5px 1.5px 0 #000;
       font-family: 'Segoe UI', Tahoma, sans-serif;
     }
     #level-name {
-      font-size: 11px;
+      font-size: 10px;
       color: #ff6b81;
       font-weight: bold;
       font-family: 'Segoe UI', Tahoma, sans-serif;
     }
     #combo-container {
       position: absolute;
-      top: 85px;
+      top: 88px;
       left: 50%;
       transform: translateX(-50%);
       text-align: center;
@@ -127,7 +137,7 @@
       box-shadow: 0 8px 0 #000, inset 0 0 0 2px #ffdd59;
       padding: 12px 24px;
       border-radius: 14px;
-      font-size: 22px;
+      font-size: 21px;
       font-weight: 900;
       color: #ffdd59;
       text-shadow: 2px 2px 0 #000;
@@ -141,32 +151,114 @@
     .overlay-screen {
       position: absolute;
       inset: 0;
-      background: rgba(16, 14, 24, 0.9);
+      background: rgba(14, 12, 22, 0.93);
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
       text-align: center;
-      padding: 24px;
+      padding: 18px;
       z-index: 20;
+      overflow-y: auto;
     }
     .hidden {
       display: none !important;
     }
     .game-title {
-      font-size: 40px;
+      font-size: 36px;
       font-weight: 900;
       line-height: 1.05;
-      margin-bottom: 10px;
+      margin-bottom: 6px;
       color: #fff;
-      text-shadow: -3px -3px 0 #000, 3px -3px 0 #000, -3px 3px 0 #000, 3px 3px 0 #000, 0 6px 0 #e84118;
+      text-shadow: -3px -3px 0 #000, 3px -3px 0 #000, -3px 3px 0 #000, 3px 3px 0 #000, 0 5px 0 #e84118;
+    }
+    .creator-credit {
+      font-size: 12px;
+      color: #ffdd59;
+      background: rgba(0, 0, 0, 0.65);
+      border: 2px solid #000;
+      padding: 4px 12px;
+      border-radius: 20px;
+      margin-bottom: 12px;
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+      font-weight: 800;
+    }
+    .select-label {
+      font-size: 14px;
+      color: #fff;
+      margin-bottom: 8px;
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+      font-weight: 900;
+    }
+    .char-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      width: 100%;
+      max-width: 360px;
+      margin-bottom: 16px;
+    }
+    .char-card {
+      background: #232033;
+      border: 3px solid #000;
+      border-radius: 12px;
+      padding: 8px 6px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: transform 0.12s, background 0.15s;
+      box-shadow: 0 4px 0 #000;
+      position: relative;
+    }
+    .char-card:hover {
+      background: #2d2942;
+    }
+    .char-card.selected {
+      background: #352f4d;
+      border-color: #ffdd59;
+      box-shadow: 0 4px 0 #000, 0 0 14px rgba(255, 221, 89, 0.55);
+      transform: translateY(-2px);
+    }
+    .char-badge {
+      position: absolute;
+      top: -8px;
+      right: 6px;
+      background: #e84118;
+      color: #fff;
+      font-size: 9px;
+      font-weight: 900;
+      padding: 2px 6px;
+      border-radius: 6px;
+      border: 1.5px solid #000;
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+    }
+    .char-preview {
+      width: 64px;
+      height: 76px;
+      margin-bottom: 4px;
+    }
+    .char-name {
+      font-size: 14px;
+      font-weight: 900;
+      color: #fff;
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+    }
+    .char-card.selected .char-name {
+      color: #ffdd59;
+    }
+    .char-role {
+      font-size: 10px;
+      color: #aaa;
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+      font-weight: bold;
     }
     .subtitle {
-      font-size: 14px;
+      font-size: 13px;
       color: #ddd;
-      margin-bottom: 20px;
+      margin-bottom: 14px;
       max-width: 320px;
-      line-height: 1.6;
+      line-height: 1.5;
       font-family: 'Segoe UI', Tahoma, sans-serif;
       font-weight: bold;
     }
@@ -174,26 +266,33 @@
       background: #ffdd59;
       color: #000;
       border: 4px solid #000;
-      padding: 12px 38px;
-      font-size: 22px;
+      padding: 11px 36px;
+      font-size: 20px;
       font-weight: 900;
       border-radius: 14px;
       cursor: pointer;
-      box-shadow: 0 6px 0 #000;
+      box-shadow: 0 5px 0 #000;
       transition: transform 0.1s;
       font-family: 'Segoe UI', Tahoma, sans-serif;
     }
     .btn:active {
-      transform: translateY(4px);
+      transform: translateY(3px);
       box-shadow: 0 2px 0 #000;
     }
+    .btn-secondary {
+      background: #2f3542;
+      color: #fff;
+      font-size: 15px;
+      padding: 8px 22px;
+      margin-top: 10px;
+    }
     .controls-hint {
-      margin-top: 22px;
-      font-size: 12px;
+      margin-top: 14px;
+      font-size: 11px;
       color: #bbb;
       background: rgba(0,0,0,0.55);
       border: 2px solid #000;
-      padding: 10px 16px;
+      padding: 8px 14px;
       border-radius: 10px;
       font-family: 'Segoe UI', Tahoma, sans-serif;
     }
@@ -256,6 +355,7 @@
     </div>
 
     <div class="hud-box" id="weather-badge">
+      <div id="active-char-hud">⭐ داروين</div>
       <div id="weather-name">☀️ الصيف الحار</div>
       <div id="level-name">صعوبة 1 (عادي)</div>
     </div>
@@ -275,11 +375,17 @@
   <!-- Season Transition Banner -->
   <div id="season-banner">🍂 دخلنا الخريف!</div>
 
-  <!-- Start Screen -->
+  <!-- Start & Character Select Screen -->
   <div id="start-screen" class="overlay-screen">
-    <div class="game-title">ICY TOWER<br><span style="font-size:24px;color:#ffdd59;">IM PAID EDITION</span></div>
-    <p class="subtitle">نفس استايل آيس تاور الكلاسيكي! كل ما تطلع أعلى المناخ بيتغير (حر ☀️ - خريف 🍂 - مطر 🌧️ - ثلج ❄️) والصعوبة بتزيد.</p>
-    <button class="btn" id="start-btn">ابدأ اللعب</button>
+    <div class="game-title">ICY TOWER<br><span style="font-size:21px;color:#ffdd59;">DARWIN EDITION</span></div>
+    <div class="creator-credit">🎮 تصميم وتطوير: داروين (الشخصية الأساسية)</div>
+
+    <div class="select-label">اختر شخصيتك قبل الصعود:</div>
+    <div class="char-grid" id="char-grid">
+      <!-- Populated by JS with live canvas previews -->
+    </div>
+
+    <button class="btn" id="start-btn">ابدأ اللعب 🚀</button>
     <div class="controls-hint">
       الكمبيوتر: الأسهم ⬅️ ➡️ للحركة + مسطرة (Space) للقفز<br>
       الموبايل: الأزرار أسفل الشاشة
@@ -289,9 +395,10 @@
   <!-- Game Over Screen -->
   <div id="gameover-screen" class="overlay-screen hidden">
     <div class="game-title" style="color:#ff4757;">وقعت!</div>
-    <p class="subtitle" id="final-stats" style="font-size:18px;color:#fff;"></p>
+    <p class="subtitle" id="final-stats" style="font-size:17px;color:#fff;"></p>
     <p class="subtitle" id="best-stats" style="color:#ffdd59;"></p>
     <button class="btn" id="restart-btn">العب تاني</button>
+    <button class="btn btn-secondary" id="change-char-btn">تغيير الشخصية</button>
   </div>
 
   <!-- Mobile Controls -->
@@ -310,6 +417,40 @@
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
+// Characters Roster
+const CHARACTERS = [
+  {
+    id: 'darwin',
+    name: 'داروين',
+    role: 'مصمم اللعبة (الأساسي)',
+    badge: 'الأساسي ⭐',
+    isMain: true
+  },
+  {
+    id: 'abyusif',
+    name: 'ابيوسف',
+    role: 'تيشيرت DAR & شنطة',
+    badge: null,
+    isMain: false
+  },
+  {
+    id: 'seif',
+    name: 'سيف',
+    role: 'سويت شيرت أسود',
+    badge: null,
+    isMain: false
+  },
+  {
+    id: 'youssef_hamada',
+    name: 'يوسف حماده',
+    role: 'كاب أسود & أبيض',
+    badge: null,
+    isMain: false
+  }
+];
+
+let selectedCharId = localStorage.getItem('icy_selected_char') || 'darwin';
+
 // Retro Arcade Sound Synthesizer
 const AudioCtx = window.AudioContext || window.webkitAudioContext;
 let audioCtx = null;
@@ -324,7 +465,15 @@ function playSound(type, pitchMod = 1) {
     gain.connect(audioCtx.destination);
     const now = audioCtx.currentTime;
 
-    if (type === 'jump') {
+    if (type === 'select') {
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(520, now);
+      osc.frequency.exponentialRampToValueAtTime(780, now + 0.08);
+      gain.gain.setValueAtTime(0.12, now);
+      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.09);
+      osc.start(now);
+      osc.stop(now + 0.09);
+    } else if (type === 'jump') {
       osc.type = 'square';
       osc.frequency.setValueAtTime(210 * pitchMod, now);
       osc.frequency.exponentialRampToValueAtTime(510 * pitchMod, now + 0.13);
@@ -386,7 +535,6 @@ const SEASONS = [
     wallEdge: '#805e46',
     platBase: '#8c6239',
     platTop: '#f1c40f',
-    platDrip: '#f39c12',
     friction: 0.84,
     gravity: 0.58
   },
@@ -402,7 +550,6 @@ const SEASONS = [
     wallEdge: '#734337',
     platBase: '#6e352c',
     platTop: '#e67e22',
-    platDrip: '#d35400',
     friction: 0.85,
     gravity: 0.60
   },
@@ -418,7 +565,6 @@ const SEASONS = [
     wallEdge: '#435169',
     platBase: '#4b6584',
     platTop: '#778ca3',
-    platDrip: '#45aaf2',
     friction: 0.91,
     gravity: 0.62
   },
@@ -434,8 +580,7 @@ const SEASONS = [
     wallEdge: '#524d73',
     platBase: '#8395a7',
     platTop: '#ffffff',
-    platDrip: '#c8d6e5',
-    friction: 0.955, // Slippery ice!
+    friction: 0.955,
     gravity: 0.63
   },
   {
@@ -450,7 +595,6 @@ const SEASONS = [
     wallEdge: '#483d70',
     platBase: '#341f97',
     platTop: '#a55eea',
-    platDrip: '#8854d0',
     friction: 0.93,
     gravity: 0.66
   }
@@ -458,7 +602,7 @@ const SEASONS = [
 
 let gameState = 'START';
 let score = 0;
-let bestScore = parseInt(localStorage.getItem('icy_classic_impaid_best') || '0');
+let bestScore = parseInt(localStorage.getItem('icy_darwin_crew_best') || '0');
 document.getElementById('best-val').innerText = bestScore;
 
 let cameraY = 0;
@@ -645,6 +789,11 @@ function startGame() {
 
 document.getElementById('start-btn').addEventListener('click', startGame);
 document.getElementById('restart-btn').addEventListener('click', startGame);
+document.getElementById('change-char-btn').addEventListener('click', () => {
+  document.getElementById('gameover-screen').classList.add('hidden');
+  document.getElementById('start-screen').classList.remove('hidden');
+  gameState = 'START';
+});
 
 function updateSeasonAndDifficulty() {
   let newSeasonIdx = 0;
@@ -667,6 +816,9 @@ function updateHUD() {
   document.getElementById('score-val').innerText = score;
   document.getElementById('floor-val').innerText = player.lastFloor;
   document.getElementById('weather-name').innerText = SEASONS[currentSeasonIndex].name;
+
+  const activeChar = CHARACTERS.find(c => c.id === selectedCharId) || CHARACTERS[0];
+  document.getElementById('active-char-hud').innerText = (activeChar.isMain ? '⭐ ' : '🎮 ') + activeChar.name;
 
   const diffLabels = ['عادي', 'متوسط', 'سريع', 'صعب', 'جنوني', 'مستحيل'];
   const label = diffLabels[Math.min(diffLabels.length - 1, difficultyLevel - 1)];
@@ -712,7 +864,6 @@ function update() {
 
   player.x += player.vx;
 
-  // Wall bounce
   if (player.x < WALL_WIDTH) {
     player.x = WALL_WIDTH;
     player.vx = Math.abs(player.vx) * 0.85;
@@ -846,181 +997,508 @@ function triggerGameOver() {
   playSound('gameover');
   if (score > bestScore) {
     bestScore = score;
-    localStorage.setItem('icy_classic_impaid_best', bestScore);
+    localStorage.setItem('icy_darwin_crew_best', bestScore);
     document.getElementById('best-val').innerText = bestScore;
   }
-  document.getElementById('final-stats').innerText = `السكور: ${score} | وصلت للطابق: ${player.lastFloor}`;
+  const activeChar = CHARACTERS.find(c => c.id === selectedCharId) || CHARACTERS[0];
+  document.getElementById('final-stats').innerText = `الشخصية: ${activeChar.name} | السكور: ${score} | طابق: ${player.lastFloor}`;
   document.getElementById('best-stats').innerText = `أعلى رقم قياسي: ${bestScore}`;
   document.getElementById('gameover-screen').classList.remove('hidden');
 }
 
 // =========================================================================
-// CLASSIC ICY TOWER CHARACTER STYLE + USER OUTFIT ("F*CK IT IM PAID")
+// MULTI-CHARACTER CLASSIC ICY TOWER RENDERER
 // =========================================================================
-function drawIcyStyleCharacter(ctx, p) {
-  ctx.save();
-  const centerX = p.x + p.w / 2;
-  const centerY = p.y + p.h / 2;
-  ctx.translate(centerX, centerY);
+function drawCharacterSprite(targetCtx, charId, facing, walkFrame, isSpinning, spinAngle) {
+  targetCtx.save();
+  if (isSpinning) {
+    targetCtx.rotate(spinAngle);
+  }
+  targetCtx.scale(facing, 1);
 
-  if (p.isSpinning) {
-    ctx.rotate(p.spinAngle);
-  } else {
-    ctx.rotate(p.vx * 0.02);
+  const legSwing = Math.sin(walkFrame) * 4.5;
+  targetCtx.lineJoin = 'round';
+  targetCtx.lineCap = 'round';
+
+  // ---------------------------------------------------
+  // 1. DARWIN (Main Character - Designer of the Game)
+  // Beanie + Very Clear White Glasses + Black "F*CK IT IM PAID" Hoodie + Grey Cargo Pants
+  // ---------------------------------------------------
+  if (charId === 'darwin') {
+    // Sneakers (Off-white chunky skate shoes)
+    targetCtx.lineWidth = 3.2;
+    targetCtx.strokeStyle = '#000000';
+    targetCtx.fillStyle = '#dcd7c9';
+    targetCtx.beginPath();
+    targetCtx.ellipse(-7 - legSwing * 0.7, 29, 9.5, 5.5, 0, 0, Math.PI * 2);
+    targetCtx.fill();
+    targetCtx.stroke();
+
+    targetCtx.fillStyle = '#f2efe9';
+    targetCtx.beginPath();
+    targetCtx.ellipse(8 + legSwing * 0.7, 29, 10, 5.5, 0, 0, Math.PI * 2);
+    targetCtx.fill();
+    targetCtx.stroke();
+
+    // Wide Grey Cargo Pants
+    targetCtx.fillStyle = '#5d6166';
+    targetCtx.beginPath();
+    targetCtx.moveTo(-15, 11);
+    targetCtx.lineTo(15, 11);
+    targetCtx.lineTo(17 + legSwing * 0.5, 26);
+    targetCtx.lineTo(3 + legSwing * 0.5, 26);
+    targetCtx.lineTo(0, 19);
+    targetCtx.lineTo(-3 - legSwing * 0.5, 26);
+    targetCtx.lineTo(-16 - legSwing * 0.5, 26);
+    targetCtx.closePath();
+    targetCtx.fill();
+    targetCtx.stroke();
+
+    // Cargo Pocket
+    targetCtx.lineWidth = 1.8;
+    targetCtx.fillStyle = '#4a4e52';
+    targetCtx.fillRect(5 + legSwing * 0.4, 15, 7, 7);
+    targetCtx.strokeRect(5 + legSwing * 0.4, 15, 7, 7);
+
+    // Black Oversized Hoodie
+    targetCtx.lineWidth = 3.4;
+    targetCtx.fillStyle = '#151518';
+    targetCtx.beginPath();
+    targetCtx.roundRect(-19, -7, 38, 22, 11);
+    targetCtx.fill();
+    targetCtx.stroke();
+
+    // Hoodie Text: F*CK IT / IM PAID
+    targetCtx.save();
+    targetCtx.scale(facing, 1);
+    targetCtx.fillStyle = '#ffffff';
+    targetCtx.font = '900 6.5px Arial Black, sans-serif';
+    targetCtx.textAlign = 'center';
+    targetCtx.fillText('F*CK IT', 0, 1.5);
+    targetCtx.fillText('IM PAID', 0, 9.5);
+    targetCtx.restore();
+
+    // Face & Ears
+    targetCtx.lineWidth = 3.2;
+    targetCtx.strokeStyle = '#000000';
+    targetCtx.fillStyle = '#e09f70';
+    targetCtx.beginPath();
+    targetCtx.arc(-16, -13, 4.2, 0, Math.PI * 2);
+    targetCtx.arc(16, -13, 4.2, 0, Math.PI * 2);
+    targetCtx.fill();
+    targetCtx.stroke();
+
+    targetCtx.beginPath();
+    targetCtx.ellipse(0, -12, 15, 10, 0, 0, Math.PI);
+    targetCtx.fill();
+    targetCtx.stroke();
+
+    // Mouth
+    targetCtx.lineWidth = 2.2;
+    targetCtx.beginPath();
+    targetCtx.arc(1, -10.5, 7.5, 0.2 * Math.PI, 0.8 * Math.PI);
+    targetCtx.stroke();
+
+    // Tall Black Beanie (Positioned slightly higher so the sunglasses are 100% clear & prominent!)
+    targetCtx.lineWidth = 3.4;
+    targetCtx.fillStyle = '#141418';
+    targetCtx.beginPath();
+    targetCtx.moveTo(-15, -23);
+    targetCtx.quadraticCurveTo(-15, -40, -6, -40);
+    targetCtx.lineTo(6, -40);
+    targetCtx.quadraticCurveTo(15, -40, 15, -23);
+    targetCtx.closePath();
+    targetCtx.fill();
+    targetCtx.stroke();
+
+    // Beanie Cuff
+    targetCtx.fillStyle = '#1e1e26';
+    targetCtx.beginPath();
+    targetCtx.roundRect(-17.5, -26.5, 35, 7.5, 3.5);
+    targetCtx.fill();
+    targetCtx.stroke();
+
+    // Alien Pin on Beanie Cuff
+    targetCtx.lineWidth = 1.4;
+    targetCtx.fillStyle = '#ffffff';
+    targetCtx.beginPath();
+    targetCtx.ellipse(-10, -22.8, 3, 3.5, 0, 0, Math.PI * 2);
+    targetCtx.fill();
+    targetCtx.stroke();
+    targetCtx.fillStyle = '#000';
+    targetCtx.fillRect(-11.3, -23.5, 1.1, 1.4);
+    targetCtx.fillRect(-9.3, -23.5, 1.1, 1.4);
+
+    // EXTRA CLEAR & PROMINENT WHITE WRAP-AROUND SUNGLASSES
+    targetCtx.lineWidth = 2.6;
+    targetCtx.strokeStyle = '#000000';
+    targetCtx.fillStyle = '#ffffff';
+    targetCtx.beginPath();
+    targetCtx.roundRect(-8, -19.5, 23, 7.8, 3.5);
+    targetCtx.fill();
+    targetCtx.stroke();
+
+    // Dark Lenses with White Shine Reflection
+    targetCtx.fillStyle = '#0c0c10';
+    targetCtx.beginPath();
+    targetCtx.roundRect(-5.5, -18, 8.2, 4.8, 1.8);
+    targetCtx.roundRect(4.5, -18, 8.2, 4.8, 1.8);
+    targetCtx.fill();
+
+    // Glossy Lens Reflection Streaks
+    targetCtx.strokeStyle = '#ffffff';
+    targetCtx.lineWidth = 1.3;
+    targetCtx.beginPath();
+    targetCtx.moveTo(-4, -17);
+    targetCtx.lineTo(-1.5, -14.5);
+    targetCtx.moveTo(6, -17);
+    targetCtx.lineTo(8.5, -14.5);
+    targetCtx.stroke();
   }
 
-  // Flip horizontally according to movement direction
-  ctx.scale(p.facing, 1);
+  // ---------------------------------------------------
+  // 2. ABYUSIF (Curly black hair, mustache & goatee, white "DAR" tee, black backpack straps)
+  // ---------------------------------------------------
+  else if (charId === 'abyusif') {
+    targetCtx.lineWidth = 3.2;
+    targetCtx.strokeStyle = '#000000';
 
-  const legSwing = Math.sin(p.walkFrame) * 4.5;
-  ctx.lineJoin = 'round';
-  ctx.lineCap = 'round';
+    // Sneakers
+    targetCtx.fillStyle = '#222';
+    targetCtx.beginPath();
+    targetCtx.ellipse(-7 - legSwing * 0.7, 29, 9.5, 5.5, 0, 0, Math.PI * 2);
+    targetCtx.ellipse(8 + legSwing * 0.7, 29, 10, 5.5, 0, 0, Math.PI * 2);
+    targetCtx.fill();
+    targetCtx.stroke();
 
-  // --- 1. CHUNKY WHITE SNEAKERS (With thick black outline like Harold's shoes) ---
-  ctx.lineWidth = 3.2;
-  ctx.strokeStyle = '#000000';
+    // Dark Jeans
+    targetCtx.fillStyle = '#2c3e50';
+    targetCtx.beginPath();
+    targetCtx.moveTo(-14, 11);
+    targetCtx.lineTo(14, 11);
+    targetCtx.lineTo(16 + legSwing * 0.5, 26);
+    targetCtx.lineTo(3 + legSwing * 0.5, 26);
+    targetCtx.lineTo(0, 19);
+    targetCtx.lineTo(-3 - legSwing * 0.5, 26);
+    targetCtx.lineTo(-15 - legSwing * 0.5, 26);
+    targetCtx.closePath();
+    targetCtx.fill();
+    targetCtx.stroke();
 
-  // Back sneaker
-  ctx.fillStyle = '#dcd7c9';
-  ctx.beginPath();
-  ctx.ellipse(-7 - legSwing * 0.7, 29, 9.5, 5.5, 0, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.stroke();
+    // White T-Shirt
+    targetCtx.fillStyle = '#f5f6fa';
+    targetCtx.beginPath();
+    targetCtx.roundRect(-18, -7, 36, 21, 9);
+    targetCtx.fill();
+    targetCtx.stroke();
 
-  // Front sneaker
-  ctx.fillStyle = '#f2efe9';
-  ctx.beginPath();
-  ctx.ellipse(8 + legSwing * 0.7, 29, 10, 5.5, 0, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.stroke();
+    // Black Backpack Straps on Shoulders (from his photo!)
+    targetCtx.fillStyle = '#18181c';
+    targetCtx.fillRect(-15, -7, 4.5, 19);
+    targetCtx.strokeRect(-15, -7, 4.5, 19);
+    targetCtx.fillRect(10.5, -7, 4.5, 19);
+    targetCtx.strokeRect(10.5, -7, 4.5, 19);
 
-  // --- 2. WIDE BAGGY GREY CARGO PANTS (Harold's wide stance + cargo pockets) ---
-  ctx.fillStyle = '#5d6166';
-  ctx.beginPath();
-  ctx.moveTo(-15, 11);
-  ctx.lineTo(15, 11);
-  ctx.lineTo(17 + legSwing * 0.5, 26);
-  ctx.lineTo(3 + legSwing * 0.5, 26);
-  ctx.lineTo(0, 19);
-  ctx.lineTo(-3 - legSwing * 0.5, 26);
-  ctx.lineTo(-16 - legSwing * 0.5, 26);
-  ctx.closePath();
-  ctx.fill();
-  ctx.stroke();
+    // "DAR" print on chest
+    targetCtx.save();
+    targetCtx.scale(facing, 1);
+    targetCtx.fillStyle = '#444';
+    targetCtx.font = '900 8px Arial Black, sans-serif';
+    targetCtx.textAlign = 'center';
+    targetCtx.fillText('DAR', 0, 7);
+    targetCtx.restore();
 
-  // Cargo pocket & strap detail on leg
-  ctx.lineWidth = 1.8;
-  ctx.fillStyle = '#4a4e52';
-  ctx.fillRect(5 + legSwing * 0.4, 15, 7, 7);
-  ctx.strokeRect(5 + legSwing * 0.4, 15, 7, 7);
+    // Face (Warm Tan Skin)
+    targetCtx.fillStyle = '#c6865c';
+    targetCtx.beginPath();
+    targetCtx.arc(-15, -14, 4, 0, Math.PI * 2);
+    targetCtx.arc(15, -14, 4, 0, Math.PI * 2);
+    targetCtx.fill();
+    targetCtx.stroke();
 
-  // --- 3. ROUNDED BLACK HOODIE (Hands in pockets pose like Harold) ---
-  ctx.lineWidth = 3.4;
-  ctx.fillStyle = '#151518';
-  ctx.beginPath();
-  ctx.roundRect(-19, -7, 38, 22, 11);
-  ctx.fill();
-  ctx.stroke();
+    targetCtx.beginPath();
+    targetCtx.ellipse(0, -14, 14.5, 11.5, 0, 0, Math.PI * 2);
+    targetCtx.fill();
+    targetCtx.stroke();
 
-  // Subtle hoodie pocket/arm crease lines (hands tucked inside)
-  ctx.lineWidth = 2;
-  ctx.strokeStyle = '#2c2c33';
-  ctx.beginPath();
-  ctx.arc(-11, 5, 5, 0.3, 2.2);
-  ctx.stroke();
+    // Eyes & Eyebrows
+    targetCtx.fillStyle = '#000';
+    targetCtx.beginPath();
+    targetCtx.arc(-3, -16, 2, 0, Math.PI * 2);
+    targetCtx.arc(7, -16, 2, 0, Math.PI * 2);
+    targetCtx.fill();
+    targetCtx.lineWidth = 2.2;
+    targetCtx.beginPath();
+    targetCtx.moveTo(-6, -19.5);
+    targetCtx.lineTo(0, -19.5);
+    targetCtx.moveTo(4, -19.5);
+    targetCtx.lineTo(10, -19.5);
+    targetCtx.stroke();
 
-  // Bold White Text "F*CK IT / IM PAID" on chest (kept unflipped so it's always readable!)
-  ctx.save();
-  ctx.scale(p.facing, 1);
-  ctx.fillStyle = '#ffffff';
-  ctx.font = '900 6.5px Arial Black, sans-serif';
-  ctx.textAlign = 'center';
-  ctx.fillText('F*CK IT', 0, 1.5);
-  ctx.fillText('IM PAID', 0, 9.5);
-  ctx.restore();
+    // Mustache & Goatee Beard
+    targetCtx.fillStyle = '#111';
+    targetCtx.beginPath();
+    targetCtx.roundRect(-2, -11.5, 9, 2.3, 1);
+    targetCtx.fill();
+    targetCtx.beginPath();
+    targetCtx.arc(2.5, -5.5, 4.2, 0, Math.PI);
+    targetCtx.fill();
 
-  // --- 4. CARTOON HEAD, EARS, BIG NOSE & WIDE SMIRK (Classic Harold Face) ---
-  ctx.lineWidth = 3.2;
-  ctx.strokeStyle = '#000000';
-  ctx.fillStyle = '#e09f70';
+    // Curly Black Hair Crown
+    targetCtx.fillStyle = '#111114';
+    targetCtx.lineWidth = 2.8;
+    const curls = [
+      [-12, -23, 6], [-6, -27, 7], [2, -28, 7.5], [10, -26, 6.5], [14, -21, 5.5], [-15, -19, 5]
+    ];
+    for (let c of curls) {
+      targetCtx.beginPath();
+      targetCtx.arc(c[0], c[1], c[2], 0, Math.PI * 2);
+      targetCtx.fill();
+      targetCtx.stroke();
+    }
+  }
 
-  // Left & Right Ears sticking out under beanie
-  ctx.beginPath();
-  ctx.arc(-16, -13, 4.2, 0, Math.PI * 2);
-  ctx.arc(16, -13, 4.2, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.stroke();
+  // ---------------------------------------------------
+  // 3. SEIF (Curly short hair, Black Quarter-Zip Sweatshirt with white undershirt, Light Grey Sweatpants, Black Shoes)
+  // ---------------------------------------------------
+  else if (charId === 'seif') {
+    targetCtx.lineWidth = 3.2;
+    targetCtx.strokeStyle = '#000000';
 
-  // Lower Face Jaw/Cheeks
-  ctx.beginPath();
-  ctx.ellipse(0, -12, 15, 10, 0, 0, Math.PI);
-  ctx.fill();
-  ctx.stroke();
+    // Black Sneakers
+    targetCtx.fillStyle = '#141417';
+    targetCtx.beginPath();
+    targetCtx.ellipse(-7 - legSwing * 0.7, 29, 9.5, 5.5, 0, 0, Math.PI * 2);
+    targetCtx.ellipse(8 + legSwing * 0.7, 29, 10, 5.5, 0, 0, Math.PI * 2);
+    targetCtx.fill();
+    targetCtx.stroke();
 
-  // Wide Classic Icy Tower Smile/Smirk
-  ctx.lineWidth = 2.4;
-  ctx.beginPath();
-  ctx.arc(1, -12, 9.5, 0.18 * Math.PI, 0.82 * Math.PI);
-  ctx.stroke();
+    // Light Grey Baggy Sweatpants
+    targetCtx.fillStyle = '#b2b6bc';
+    targetCtx.beginPath();
+    targetCtx.moveTo(-15, 11);
+    targetCtx.lineTo(15, 11);
+    targetCtx.lineTo(16.5 + legSwing * 0.5, 26);
+    targetCtx.lineTo(3 + legSwing * 0.5, 26);
+    targetCtx.lineTo(0, 19);
+    targetCtx.lineTo(-3 - legSwing * 0.5, 26);
+    targetCtx.lineTo(-16 - legSwing * 0.5, 26);
+    targetCtx.closePath();
+    targetCtx.fill();
+    targetCtx.stroke();
 
-  // Round Cartoon Nose
-  ctx.lineWidth = 2.4;
-  ctx.fillStyle = '#e09f70';
-  ctx.beginPath();
-  ctx.ellipse(3, -12.5, 4.8, 3.2, 0, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.stroke();
+    // White Drawstring & White Undershirt Hem
+    targetCtx.fillStyle = '#ffffff';
+    targetCtx.fillRect(-15, 9, 30, 3.5);
+    targetCtx.strokeStyle = '#ffffff';
+    targetCtx.lineWidth = 1.8;
+    targetCtx.beginPath();
+    targetCtx.moveTo(2, 12);
+    targetCtx.lineTo(2, 18);
+    targetCtx.moveTo(5, 12);
+    targetCtx.lineTo(6, 17);
+    targetCtx.stroke();
 
-  // --- 5. WHITE WRAP-AROUND SUNGLASSES (Peeking right under the beanie) ---
-  ctx.lineWidth = 2.2;
-  ctx.fillStyle = '#ffffff';
-  ctx.beginPath();
-  ctx.roundRect(-4, -18.5, 17, 5.5, 2.5);
-  ctx.fill();
-  ctx.stroke();
+    // Black Quarter-Zip Sweatshirt
+    targetCtx.strokeStyle = '#000000';
+    targetCtx.lineWidth = 3.4;
+    targetCtx.fillStyle = '#16161a';
+    targetCtx.beginPath();
+    targetCtx.roundRect(-18, -7, 36, 18, 9);
+    targetCtx.fill();
+    targetCtx.stroke();
 
-  // Dark lenses
-  ctx.fillStyle = '#111111';
-  ctx.beginPath();
-  ctx.roundRect(-2, -17.3, 6, 3.2, 1);
-  ctx.roundRect(5.5, -17.3, 6, 3.2, 1);
-  ctx.fill();
+    // Silver Half-Zipper on Chest
+    targetCtx.strokeStyle = '#dcdde1';
+    targetCtx.lineWidth = 2;
+    targetCtx.beginPath();
+    targetCtx.moveTo(3, -7);
+    targetCtx.lineTo(3, 2);
+    targetCtx.stroke();
 
-  // --- 6. TALL SLOUCHY BLACK BEANIE + ALIEN PIN (Harold's exact hat silhouette!) ---
-  ctx.lineWidth = 3.4;
-  ctx.strokeStyle = '#000000';
-  ctx.fillStyle = '#141418';
+    // Face
+    targetCtx.strokeStyle = '#000000';
+    targetCtx.lineWidth = 3.2;
+    targetCtx.fillStyle = '#deb08e';
+    targetCtx.beginPath();
+    targetCtx.arc(-14, -14, 3.8, 0, Math.PI * 2);
+    targetCtx.arc(14, -14, 3.8, 0, Math.PI * 2);
+    targetCtx.fill();
+    targetCtx.stroke();
 
-  // Tall slouchy upper crown
-  ctx.beginPath();
-  ctx.moveTo(-15, -21);
-  ctx.quadraticCurveTo(-15, -38, -6, -38);
-  ctx.lineTo(6, -38);
-  ctx.quadraticCurveTo(15, -38, 15, -21);
-  ctx.closePath();
-  ctx.fill();
-  ctx.stroke();
+    targetCtx.beginPath();
+    targetCtx.ellipse(0, -14, 14, 11, 0, 0, Math.PI * 2);
+    targetCtx.fill();
+    targetCtx.stroke();
 
-  // Folded ribbed cuff pulled down over brow
-  ctx.fillStyle = '#1d1d24';
-  ctx.beginPath();
-  ctx.roundRect(-17.5, -24, 35, 8.5, 4);
-  ctx.fill();
-  ctx.stroke();
+    // Light Chin Beard & Smile
+    targetCtx.fillStyle = '#222';
+    targetCtx.beginPath();
+    targetCtx.arc(1, -5.5, 5, 0.1 * Math.PI, 0.9 * Math.PI);
+    targetCtx.fill();
 
-  // Alien Logo Pin on cuff (replacing Harold's paw pin)
-  ctx.lineWidth = 1.5;
-  ctx.fillStyle = '#ffffff';
-  ctx.beginPath();
-  ctx.ellipse(-9, -19.8, 3.2, 3.8, 0, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.stroke();
-  // Alien eyes
-  ctx.fillStyle = '#000';
-  ctx.fillRect(-10.5, -20.5, 1.2, 1.5);
-  ctx.fillRect(-8.3, -20.5, 1.2, 1.5);
+    targetCtx.fillStyle = '#000';
+    targetCtx.beginPath();
+    targetCtx.arc(-2, -16, 1.9, 0, Math.PI * 2);
+    targetCtx.arc(7, -16, 1.9, 0, Math.PI * 2);
+    targetCtx.fill();
 
-  ctx.restore();
+    // Short Curly Top Hair
+    targetCtx.fillStyle = '#18181c';
+    targetCtx.lineWidth = 2.6;
+    const topCurls = [
+      [-11, -23, 5.2], [-4, -26, 6], [4, -26, 6], [11, -23, 5.2]
+    ];
+    for (let c of topCurls) {
+      targetCtx.beginPath();
+      targetCtx.arc(c[0], c[1], c[2], 0, Math.PI * 2);
+      targetCtx.fill();
+      targetCtx.stroke();
+    }
+  }
+
+  // ---------------------------------------------------
+  // 4. YOUSSEF HAMADA (Black Baseball Cap with curly fringe peeking out, mustache & goatee, white tee)
+  // ---------------------------------------------------
+  else if (charId === 'youssef_hamada') {
+    targetCtx.lineWidth = 3.2;
+    targetCtx.strokeStyle = '#000000';
+
+    // White Sneakers
+    targetCtx.fillStyle = '#f1f2f6';
+    targetCtx.beginPath();
+    targetCtx.ellipse(-7 - legSwing * 0.7, 29, 9.5, 5.5, 0, 0, Math.PI * 2);
+    targetCtx.ellipse(8 + legSwing * 0.7, 29, 10, 5.5, 0, 0, Math.PI * 2);
+    targetCtx.fill();
+    targetCtx.stroke();
+
+    // Casual Pants
+    targetCtx.fillStyle = '#3d3d45';
+    targetCtx.beginPath();
+    targetCtx.moveTo(-14, 11);
+    targetCtx.lineTo(14, 11);
+    targetCtx.lineTo(16 + legSwing * 0.5, 26);
+    targetCtx.lineTo(3 + legSwing * 0.5, 26);
+    targetCtx.lineTo(0, 19);
+    targetCtx.lineTo(-3 - legSwing * 0.5, 26);
+    targetCtx.lineTo(-15 - legSwing * 0.5, 26);
+    targetCtx.closePath();
+    targetCtx.fill();
+    targetCtx.stroke();
+
+    // Clean White T-Shirt
+    targetCtx.fillStyle = '#ffffff';
+    targetCtx.beginPath();
+    targetCtx.roundRect(-18, -7, 36, 21, 9);
+    targetCtx.fill();
+    targetCtx.stroke();
+
+    // Face
+    targetCtx.fillStyle = '#d49a72';
+    targetCtx.beginPath();
+    targetCtx.arc(-14, -14, 4, 0, Math.PI * 2);
+    targetCtx.arc(14, -14, 4, 0, Math.PI * 2);
+    targetCtx.fill();
+    targetCtx.stroke();
+
+    targetCtx.beginPath();
+    targetCtx.ellipse(0, -14, 14, 11, 0, 0, Math.PI * 2);
+    targetCtx.fill();
+    targetCtx.stroke();
+
+    // Eyes
+    targetCtx.fillStyle = '#000';
+    targetCtx.beginPath();
+    targetCtx.arc(-2, -15.5, 1.9, 0, Math.PI * 2);
+    targetCtx.arc(7, -15.5, 1.9, 0, Math.PI * 2);
+    targetCtx.fill();
+
+    // Mustache & Chin Goatee (from his photo!)
+    targetCtx.fillStyle = '#141414';
+    targetCtx.beginPath();
+    targetCtx.roundRect(-1.5, -11, 8.5, 2.1, 1);
+    targetCtx.fill();
+    targetCtx.beginPath();
+    targetCtx.arc(2.5, -5.2, 4.4, 0, Math.PI);
+    targetCtx.fill();
+
+    // Curly Hair Fringe peeking under the cap
+    targetCtx.fillStyle = '#111';
+    targetCtx.beginPath();
+    targetCtx.arc(-6, -20, 4, 0, Math.PI * 2);
+    targetCtx.arc(0, -20.5, 4.2, 0, Math.PI * 2);
+    targetCtx.arc(6, -20, 3.8, 0, Math.PI * 2);
+    targetCtx.fill();
+
+    // Black Baseball Cap + Forward Brim
+    targetCtx.lineWidth = 3.2;
+    targetCtx.fillStyle = '#18181d';
+    targetCtx.beginPath();
+    targetCtx.arc(0, -21, 14.5, Math.PI, 0);
+    targetCtx.closePath();
+    targetCtx.fill();
+    targetCtx.stroke();
+
+    // Cap Visor/Brim pointing forward
+    targetCtx.fillStyle = '#111115';
+    targetCtx.beginPath();
+    targetCtx.roundRect(-2, -23.5, 22, 4.5, 2.5);
+    targetCtx.fill();
+    targetCtx.stroke();
+  }
+
+  targetCtx.restore();
+}
+
+// Build Character Selector Cards with Live Previews
+function initCharacterMenu() {
+  const grid = document.getElementById('char-grid');
+  grid.innerHTML = '';
+
+  CHARACTERS.forEach(char => {
+    const card = document.createElement('div');
+    card.className = 'char-card' + (char.id === selectedCharId ? ' selected' : '');
+    card.dataset.id = char.id;
+
+    if (char.badge) {
+      const badge = document.createElement('div');
+      badge.className = 'char-badge';
+      badge.innerText = char.badge;
+      card.appendChild(badge);
+    }
+
+    const previewCanvas = document.createElement('canvas');
+    previewCanvas.width = 76;
+    previewCanvas.height = 88;
+    previewCanvas.className = 'char-preview';
+    const pCtx = previewCanvas.getContext('2d');
+    pCtx.translate(38, 48);
+    pCtx.scale(1.05, 1.05);
+    drawCharacterSprite(pCtx, char.id, 1, 0, false, 0);
+
+    const nameEl = document.createElement('div');
+    nameEl.className = 'char-name';
+    nameEl.innerText = char.name;
+
+    const roleEl = document.createElement('div');
+    roleEl.className = 'char-role';
+    roleEl.innerText = char.role;
+
+    card.appendChild(previewCanvas);
+    card.appendChild(nameEl);
+    card.appendChild(roleEl);
+
+    card.addEventListener('click', () => {
+      selectedCharId = char.id;
+      localStorage.setItem('icy_selected_char', selectedCharId);
+      document.querySelectorAll('.char-card').forEach(c => c.classList.remove('selected'));
+      card.classList.add('selected');
+      playSound('select');
+      updateHUD();
+    });
+
+    grid.appendChild(card);
+  });
 }
 
 // =========================================================================
@@ -1040,11 +1518,9 @@ function drawBrickBackground(season) {
     const xStart = isOdd ? -brickW / 2 : 0;
 
     for (let x = xStart; x < W; x += brickW) {
-      // Main stone block
       ctx.fillStyle = season.brickFill;
       ctx.fillRect(x + 2, y + 2, brickW - 4, brickH - 4);
 
-      // Subtle top/left stone bevel highlight (just like the reference image)
       ctx.fillStyle = season.brickHighlight;
       ctx.fillRect(x + 2, y + 2, brickW - 4, 3);
       ctx.fillRect(x + 2, y + 2, 3, brickH - 4);
@@ -1058,13 +1534,13 @@ function draw() {
   // 1. Classic Dark Stone Brick Wall Background
   drawBrickBackground(season);
 
-  // Lightning flash during Storm
+  // Lightning flash
   if (lightningFlash > 0) {
     ctx.fillStyle = `rgba(255, 255, 255, ${lightningFlash})`;
     ctx.fillRect(0, 0, W, H);
   }
 
-  // 2. Side Tower Pillars with Thick Black Outline
+  // 2. Side Tower Pillars
   ctx.fillStyle = season.wallFill;
   ctx.fillRect(0, 0, WALL_WIDTH, H);
   ctx.fillRect(W - WALL_WIDTH, 0, WALL_WIDTH, H);
@@ -1085,7 +1561,7 @@ function draw() {
   ctx.lineTo(W - WALL_WIDTH, H);
   ctx.stroke();
 
-  // 3. Classic Icy/Textured Platforms + Wooden Floor Sign (Like the "150" sign!)
+  // 3. Classic Platforms + Wooden Floor Signs
   for (let p of platforms) {
     const drawY = p.y + cameraY;
     if (drawY < -40 || drawY > H + 40) continue;
@@ -1094,14 +1570,12 @@ function draw() {
     ctx.lineWidth = 3;
     ctx.strokeStyle = '#000000';
 
-    // Stone/Ice Base Block
     ctx.fillStyle = p.isMilestone ? '#27ae60' : season.platBase;
     ctx.beginPath();
     ctx.roundRect(p.x, drawY + 4, p.w, p.h - 4, 5);
     ctx.fill();
     ctx.stroke();
 
-    // Jagged Icicle / Weather Top Layer
     ctx.fillStyle = p.isMilestone ? '#2ecc71' : season.platTop;
     ctx.beginPath();
     ctx.moveTo(p.x, drawY + 6);
@@ -1109,7 +1583,6 @@ function draw() {
     ctx.lineTo(p.x + p.w, drawY);
     ctx.lineTo(p.x + p.w, drawY + 6);
 
-    // Jagged icicle teeth along the bottom edge of the top layer
     const toothWidth = 10;
     for (let tx = p.x + p.w; tx > p.x; tx -= toothWidth) {
       const nextX = Math.max(p.x, tx - toothWidth);
@@ -1121,7 +1594,6 @@ function draw() {
     ctx.fill();
     ctx.stroke();
 
-    // Wooden Floor Sign Hanging Under Milestone Floors (Every 10 floors, exact "150" style)
     if (p.floor > 0 && p.floor % 10 === 0) {
       const signW = 44;
       const signH = 18;
@@ -1135,7 +1607,6 @@ function draw() {
       ctx.fill();
       ctx.stroke();
 
-      // Wood grain line
       ctx.strokeStyle = '#523014';
       ctx.lineWidth = 1;
       ctx.beginPath();
@@ -1143,7 +1614,6 @@ function draw() {
       ctx.lineTo(signX + signW - 3, signY + 6);
       ctx.stroke();
 
-      // Crisp white number
       ctx.fillStyle = '#ffffff';
       ctx.font = 'bold 11px Arial, sans-serif';
       ctx.textAlign = 'center';
@@ -1151,10 +1621,13 @@ function draw() {
     }
   }
 
-  // 4. Draw Custom Icy-Tower-Styled Character
+  // 4. Draw Selected Character
   ctx.save();
-  ctx.translate(0, cameraY);
-  drawIcyStyleCharacter(ctx, player);
+  ctx.translate(player.x + player.w / 2, player.y + player.h / 2 + cameraY);
+  if (!player.isSpinning) {
+    ctx.rotate(player.vx * 0.02);
+  }
+  drawCharacterSprite(ctx, selectedCharId, player.facing, player.walkFrame, player.isSpinning, player.spinAngle);
   ctx.restore();
 
   // 5. Weather Particles
@@ -1208,6 +1681,7 @@ function loop() {
   requestAnimationFrame(loop);
 }
 
+initCharacterMenu();
 resetGame();
 loop();
 </script>
