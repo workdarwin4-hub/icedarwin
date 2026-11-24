@@ -3,1676 +3,1014 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <title>ICY TOWER CLASSIC: DARWIN & CREW</title>
+  <title>ICY TOWER — DARWIN ONLINE</title>
   <style>
-    * {
-      box-sizing: border-box;
-      user-select: none;
-      -webkit-user-select: none;
-      -webkit-touch-callout: none;
-      margin: 0;
-      padding: 0;
-    }
+    * { box-sizing: border-box; user-select: none; -webkit-user-select: none; margin: 0; padding: 0; }
     html, body {
-      position: fixed;
-      inset: 0;
-      width: 100%;
-      height: 100%;
-      background: #09090b;
-      color: #fff;
-      font-family: 'Arial Black', 'Segoe UI', Tahoma, sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      overflow: hidden;
-      touch-action: none;
+      position: fixed; inset: 0; width: 100%; height: 100%;
+      background: #09090d; color: #fff; font-family: 'Segoe UI', Tahoma, sans-serif;
+      overflow: hidden; touch-action: none;
     }
-    #game-wrapper {
-      position: relative;
-      width: 100%;
-      max-width: 480px;
-      height: 100dvh;
-      height: 100%;
-      max-height: 880px;
-      background: #1a1824;
-      box-shadow: 0 0 50px rgba(0, 0, 0, 0.95);
-      overflow: hidden;
-      border-left: 3px solid #000;
-      border-right: 3px solid #000;
+    #app {
+      position: relative; width: 100%; max-width: 500px; height: 100%;
+      margin: 0 auto; background: #161522; overflow: hidden;
     }
-    canvas {
-      display: block;
-      width: 100%;
-      height: 100%;
-      touch-action: none;
+    canvas { display: block; width: 100%; height: 100%; }
+
+    .top-bar {
+      position: absolute; top: max(8px, env(safe-area-inset-top)); left: 8px; right: 8px;
+      display: flex; justify-content: space-between; gap: 6px; z-index: 15; pointer-events: none;
     }
-    #hud {
-      position: absolute;
-      top: max(10px, env(safe-area-inset-top));
-      left: 10px;
-      right: 10px;
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      pointer-events: none;
-      z-index: 10;
-      gap: 6px;
+    .pill {
+      background: rgba(12, 12, 20, 0.9); border: 2px solid #000; border-radius: 10px;
+      padding: 5px 9px; font-size: 11px; font-weight: 800; pointer-events: auto;
     }
-    .hud-box {
-      background: rgba(15, 14, 22, 0.88);
-      border: 2.5px solid #000;
-      box-shadow: 0 3px 0 rgba(0,0,0,0.6), inset 0 0 0 1px rgba(255,255,255,0.15);
-      border-radius: 10px;
-      padding: 4px 9px;
-    }
-    .hud-label {
-      font-size: 9.5px;
-      color: #bbb;
-      font-family: 'Segoe UI', Tahoma, sans-serif;
-      font-weight: bold;
-    }
-    .hud-val {
-      font-size: 17px;
-      font-weight: 900;
-      color: #ffdd59;
-      text-shadow: 1.5px 1.5px 0 #000;
-    }
-    #weather-badge {
-      text-align: center;
-      flex: 1;
-    }
-    #active-char-hud {
-      font-size: 11px;
-      font-weight: 900;
-      color: #2ed573;
-      text-shadow: 1.5px 1.5px 0 #000;
-      font-family: 'Segoe UI', Tahoma, sans-serif;
-    }
-    #weather-name {
-      font-size: 12px;
-      font-weight: 900;
-      color: #fff;
-      text-shadow: 1.5px 1.5px 0 #000;
-      font-family: 'Segoe UI', Tahoma, sans-serif;
-    }
-    #level-name {
-      font-size: 9.5px;
-      color: #ff6b81;
-      font-weight: bold;
-      font-family: 'Segoe UI', Tahoma, sans-serif;
-    }
-    #combo-container {
-      position: absolute;
-      top: 82px;
-      left: 50%;
-      transform: translateX(-50%);
-      text-align: center;
-      pointer-events: none;
-      z-index: 10;
-      opacity: 0;
-      transition: opacity 0.2s;
-    }
-    #combo-text {
-      font-size: 26px;
-      font-weight: 900;
-      color: #ffdd59;
-      text-shadow: -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000, 2px 2px 0 #000, 0 4px 0 #000;
-      font-style: italic;
-    }
-    #combo-bar-bg {
-      width: 130px;
-      height: 9px;
-      background: #000;
-      border-radius: 5px;
-      margin: 4px auto 0;
-      padding: 2px;
-    }
-    #combo-bar {
-      height: 100%;
-      width: 100%;
-      background: linear-gradient(90deg, #ff4757, #ffdd59);
-      border-radius: 3px;
-    }
-    #season-banner {
-      position: absolute;
-      top: 32%;
-      left: 50%;
-      transform: translate(-50%, -50%) scale(0.8);
-      background: #1e1b29;
-      border: 3.5px solid #000;
-      box-shadow: 0 7px 0 #000, inset 0 0 0 2px #ffdd59;
-      padding: 10px 20px;
-      border-radius: 14px;
-      font-size: 18px;
-      font-weight: 900;
-      color: #ffdd59;
-      text-shadow: 2px 2px 0 #000;
-      font-family: 'Segoe UI', Tahoma, sans-serif;
-      pointer-events: none;
-      opacity: 0;
-      transition: all 0.3s ease;
-      z-index: 15;
-      text-align: center;
-      width: 82%;
-    }
-    .overlay-screen {
-      position: absolute;
-      inset: 0;
-      background: rgba(14, 12, 22, 0.94);
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      padding: 16px;
-      z-index: 25;
-      overflow-y: auto;
-      touch-action: auto;
-    }
-    .hidden {
-      display: none !important;
-    }
-    .game-title {
-      font-size: 32px;
-      font-weight: 900;
-      line-height: 1.05;
-      margin-bottom: 6px;
-      color: #fff;
-      text-shadow: -2.5px -2.5px 0 #000, 2.5px -2.5px 0 #000, -2.5px 2.5px 0 #000, 2.5px 2.5px 0 #000, 0 5px 0 #e84118;
-    }
-    .creator-credit {
-      font-size: 11px;
-      color: #ffdd59;
-      background: rgba(0, 0, 0, 0.65);
-      border: 2px solid #000;
-      padding: 4px 12px;
-      border-radius: 20px;
-      margin-bottom: 10px;
-      font-family: 'Segoe UI', Tahoma, sans-serif;
-      font-weight: 800;
-    }
-    .select-label {
-      font-size: 13px;
-      color: #fff;
-      margin-bottom: 8px;
-      font-family: 'Segoe UI', Tahoma, sans-serif;
-      font-weight: 900;
-    }
-    .char-grid {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 8px;
-      width: 100%;
-      max-width: 340px;
-      margin-bottom: 14px;
-    }
-    .char-card {
-      background: #232033;
-      border: 3px solid #000;
-      border-radius: 12px;
-      padding: 6px 4px;
-      cursor: pointer;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      transition: transform 0.12s, background 0.15s;
-      box-shadow: 0 4px 0 #000;
-      position: relative;
-    }
-    .char-card.selected {
-      background: #352f4d;
-      border-color: #ffdd59;
-      box-shadow: 0 4px 0 #000, 0 0 14px rgba(255, 221, 89, 0.55);
-      transform: translateY(-2px);
-    }
-    .char-badge {
-      position: absolute;
-      top: -8px;
-      right: 6px;
-      background: #e84118;
-      color: #fff;
-      font-size: 9px;
-      font-weight: 900;
-      padding: 2px 6px;
-      border-radius: 6px;
-      border: 1.5px solid #000;
-      font-family: 'Segoe UI', Tahoma, sans-serif;
-    }
-    .char-preview {
-      width: 58px;
-      height: 68px;
-      margin-bottom: 2px;
-    }
-    .char-name {
-      font-size: 13px;
-      font-weight: 900;
-      color: #fff;
-      font-family: 'Segoe UI', Tahoma, sans-serif;
-    }
-    .char-card.selected .char-name {
-      color: #ffdd59;
-    }
-    .char-role {
-      font-size: 9.5px;
-      color: #aaa;
-      font-family: 'Segoe UI', Tahoma, sans-serif;
-      font-weight: bold;
-    }
-    .subtitle {
-      font-size: 13px;
-      color: #ddd;
-      margin-bottom: 12px;
-      max-width: 310px;
-      line-height: 1.5;
-      font-family: 'Segoe UI', Tahoma, sans-serif;
-      font-weight: bold;
-    }
-    .btn {
-      background: #ffdd59;
-      color: #000;
-      border: 3.5px solid #000;
-      padding: 10px 34px;
-      font-size: 19px;
-      font-weight: 900;
-      border-radius: 14px;
-      cursor: pointer;
-      box-shadow: 0 5px 0 #000;
-      transition: transform 0.1s;
-      font-family: 'Segoe UI', Tahoma, sans-serif;
-    }
-    .btn:active {
-      transform: translateY(3px);
-      box-shadow: 0 2px 0 #000;
-    }
-    .btn-secondary {
-      background: #2f3542;
-      color: #fff;
-      font-size: 14px;
-      padding: 8px 20px;
-      margin-top: 10px;
-    }
-    .controls-hint {
-      margin-top: 12px;
-      font-size: 11px;
-      color: #bbb;
-      background: rgba(0,0,0,0.55);
-      border: 2px solid #000;
-      padding: 7px 12px;
-      border-radius: 10px;
-      font-family: 'Segoe UI', Tahoma, sans-serif;
-      line-height: 1.4;
+    .gold { color: #ffdd59; }
+    .dev-tag {
+      background: #e84118; color: #fff; padding: 1px 6px; border-radius: 6px;
+      font-size: 10px; margin-right: 4px; border: 1px solid #000;
     }
 
-    /* Mobile Controls Dock - Elevated cleanly above Safari/Chrome bottom bar */
-    #mobile-controls {
-      position: absolute;
-      bottom: max(18px, calc(env(safe-area-inset-bottom) + 14px));
-      left: 14px;
-      right: 14px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      z-index: 15;
-      pointer-events: none;
+    .screen {
+      position: absolute; inset: 0; background: rgba(12, 11, 20, 0.96);
+      z-index: 30; display: flex; flex-direction: column; align-items: center;
+      justify-content: center; padding: 16px; text-align: center; overflow-y: auto;
+      touch-action: auto;
     }
-    .touch-group {
-      display: flex;
-      gap: 14px;
-      pointer-events: auto;
+    .hidden { display: none !important; }
+    h1 { font-size: 26px; font-weight: 900; margin-bottom: 6px; text-shadow: 0 3px 0 #000; }
+    .sub { font-size: 12px; color: #c5c6d0; margin-bottom: 12px; max-width: 350px; line-height: 1.5; }
+
+    .tabs { display: flex; gap: 6px; margin-bottom: 10px; }
+    .tab-btn {
+      background: #232136; color: #bbb; border: 2px solid #000; border-radius: 10px;
+      padding: 6px 14px; font-size: 12px; font-weight: 800; cursor: pointer;
     }
-    .touch-btn {
-      width: 68px;
-      height: 68px;
-      border-radius: 50%;
-      background: rgba(20, 18, 30, 0.85);
-      border: 3.5px solid #000;
-      box-shadow: 0 5px 0 #000, inset 0 0 0 2px rgba(255,255,255,0.2);
-      color: #fff;
-      font-size: 24px;
-      font-weight: bold;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      touch-action: none;
+    .tab-btn.active { background: #ffdd59; color: #000; }
+
+    .field {
+      width: 100%; max-width: 310px; background: #100f18; border: 2px solid #444;
+      border-radius: 10px; color: #fff; padding: 9px 12px; font-size: 13px;
+      margin-bottom: 8px; outline: none; text-align: center;
     }
-    .touch-btn.active, .touch-btn:active {
-      background: #ffdd59;
-      color: #000;
-      transform: translateY(3px);
-      box-shadow: 0 2px 0 #000;
+    .err-msg { color: #ff4757; font-size: 12px; font-weight: 800; min-height: 18px; margin-bottom: 6px; }
+    .ok-msg { color: #2ed573; font-size: 12px; font-weight: 800; min-height: 18px; margin-bottom: 6px; }
+
+    .btn {
+      background: #ffdd59; color: #000; border: 3px solid #000; border-radius: 12px;
+      padding: 9px 16px; font-size: 13px; font-weight: 900; cursor: pointer;
+      box-shadow: 0 4px 0 #000; margin: 4px;
     }
-    #btn-jump {
-      width: 82px;
-      height: 82px;
-      background: rgba(232, 65, 24, 0.92);
-      font-size: 18px;
-      font-weight: 900;
-      font-family: 'Segoe UI', Tahoma, sans-serif;
+    .btn:active { transform: translateY(2px); box-shadow: 0 2px 0 #000; }
+    .btn-dark { background: #262538; color: #fff; }
+    .btn-mode { background: #2ed573; color: #000; }
+    .btn-friend { background: #70a1ff; color: #000; }
+    .btn-sm { padding: 5px 10px; font-size: 11px; margin: 2px; }
+
+    .grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; width: 100%; max-width: 360px; margin: 8px 0 10px; }
+    .card {
+      background: #211f32; border: 2.5px solid #000; border-radius: 10px; padding: 8px;
+      cursor: pointer; font-size: 12px; font-weight: 800;
     }
-    #btn-jump.active, #btn-jump:active {
-      background: #ffdd59;
-      color: #000;
+    .card.active { border-color: #ffdd59; background: #2f2c47; }
+
+    .admin-box { display: flex; gap: 6px; width: 100%; max-width: 340px; margin-top: 6px; }
+    .admin-box input {
+      flex: 1; background: #100f18; border: 2px solid #444; border-radius: 8px;
+      color: #fff; padding: 7px 10px; font-size: 12px; outline: none;
+    }
+
+    .panel-box {
+      width: 100%; max-width: 370px; background: #1c1a2b; border: 2.5px solid #000;
+      border-radius: 12px; padding: 10px; margin-bottom: 10px; text-align: right;
+      max-height: 180px; overflow-y: auto;
+    }
+    .list-row {
+      display: flex; justify-content: space-between; align-items: center;
+      background: #262338; border-radius: 8px; padding: 6px 8px; margin-bottom: 6px;
+      font-size: 12px; font-weight: 700;
+    }
+
+    #pad {
+      position: absolute; bottom: max(16px, calc(env(safe-area-inset-bottom) + 12px));
+      left: 12px; right: 12px; display: flex; justify-content: space-between;
+      z-index: 20; pointer-events: none;
+    }
+    .pad-group { display: flex; gap: 10px; pointer-events: auto; }
+    .tbtn {
+      width: 62px; height: 62px; border-radius: 50%; background: rgba(20, 19, 32, 0.85);
+      border: 3px solid #000; box-shadow: 0 4px 0 #000; color: #fff; font-size: 20px;
+      font-weight: 900; display: flex; align-items: center; justify-content: center;
+    }
+    .tbtn.jump { width: 74px; height: 74px; background: #e84118; font-size: 14px; }
+
+    #role-banner {
+      position: absolute; top: 68px; left: 50%; transform: translateX(-50%);
+      background: rgba(0,0,0,0.85); border: 2px solid #ffdd59; border-radius: 10px;
+      padding: 5px 12px; font-size: 12px; font-weight: 900; z-index: 16; display: none;
+      width: 90%; text-align: center;
     }
   </style>
 </head>
 <body>
+<div id="app">
+  <canvas id="c"></canvas>
 
-<div id="game-wrapper">
-  <canvas id="gameCanvas"></canvas>
-
-  <!-- HUD -->
-  <div id="hud">
-    <div class="hud-box">
-      <div class="hud-label">السكور</div>
-      <div class="hud-val" id="score-val">0</div>
-      <div class="hud-label">طابق: <span id="floor-val" style="color:#fff;">0</span></div>
+  <div class="top-bar">
+    <div class="pill">
+      <div>السكور: <span class="gold" id="ui-score">0</span> | طابق <span id="ui-floor">0</span></div>
+      <div>العملات: <span class="gold" id="ui-coins">0</span> 🪙</div>
     </div>
-
-    <div class="hud-box" id="weather-badge">
-      <div id="active-char-hud">⭐ داروين</div>
-      <div id="weather-name">☀️ الصيف الحار</div>
-      <div id="level-name">صعوبة 1 (عادي)</div>
+    <div class="pill" style="text-align:center;">
+      <div id="ui-user">@guest</div>
+      <div id="ui-weather" style="color:#7ed6df;">☀️ الصيف</div>
     </div>
-
-    <div class="hud-box" style="text-align:left;">
-      <div class="hud-label">أعلى سكور</div>
-      <div class="hud-val" id="best-val">0</div>
+    <div class="pill" style="text-align:left;">
+      <button class="btn" style="padding:4px 8px;font-size:11px;margin:0;" id="btn-menu">القائمة</button>
     </div>
   </div>
 
-  <!-- Combo Display -->
-  <div id="combo-container">
-    <div id="combo-text">COMBO x3!</div>
-    <div id="combo-bar-bg"><div id="combo-bar"></div></div>
+  <div id="role-banner"></div>
+
+  <!-- Auth Screen -->
+  <div id="auth-screen" class="screen">
+    <h1>ICY TOWER</h1>
+    <p class="sub">اعمل حسابك باليوزر والباسورد. كل يوزر فريد ومش ينفع يتكرر، وحسابك وفرينداتك بيتحفظوا أونلاين تلقائياً.</p>
+
+    <div class="tabs">
+      <button class="tab-btn active" id="tab-register">إنشاء حساب جديد</button>
+      <button class="tab-btn" id="tab-login">تسجيل دخول</button>
+    </div>
+
+    <input type="text" id="auth-user" class="field" placeholder="اكتب اليوزر نيم (مثال: darwin_pro)" maxlength="20" autocomplete="off" />
+    <input type="password" id="auth-pass" class="field" placeholder="اكتب الباسورد..." maxlength="40" autocomplete="off" />
+    <div id="auth-msg" class="err-msg"></div>
+
+    <button class="btn btn-mode" id="btn-auth-submit">إنشاء الحساب</button>
   </div>
 
-  <!-- Season Transition Banner -->
-  <div id="season-banner">🍂 دخلنا الخريف!</div>
+  <!-- Hub Screen -->
+  <div id="hub-screen" class="screen hidden">
+    <h1 id="hub-title">@user</h1>
+    <p class="sub">العملات: <span class="gold" id="hub-coins">0</span> 🪙 | أعلى سكور: <span class="gold" id="hub-best">0</span> | ليفل: <span id="hub-level">1</span></p>
 
-  <!-- Start & Character Select Screen -->
-  <div id="start-screen" class="overlay-screen">
-    <div class="game-title">ICY TOWER<br><span style="font-size:19px;color:#ffdd59;">DARWIN EDITION</span></div>
-    <div class="creator-credit">🎮 تصميم وتطوير: داروين (الشخصية الأساسية)</div>
+    <div style="font-size:13px;font-weight:900;">اختر الشخصية واللبس:</div>
+    <div class="grid-2" id="char-list"></div>
 
-    <div class="select-label">اختر شخصيتك قبل الصعود:</div>
-    <div class="char-grid" id="char-grid"></div>
-
-    <button class="btn" id="start-btn">ابدأ اللعب 🚀</button>
-    <div class="controls-hint">
-      📱 الموبايل: استخدم الأزرار تحت أو اسحب بصباعك على الشاشة<br>
-      💻 الكمبيوتر: الأسهم ⬅️ ➡️ + مسطرة (Space)
+    <div style="display:flex;flex-wrap:wrap;justify-content:center;margin-bottom:6px;">
+      <button class="btn btn-mode" id="btn-play-tower">صعود البرج</button>
+      <button class="btn" style="background:#a29bfe;color:#000;" id="btn-play-ship">مركبة الفضاء</button>
+      <button class="btn btn-friend" id="btn-open-friends">الأصدقاء (<span id="req-count">0</span>)</button>
     </div>
+
+    <div class="admin-box">
+      <input type="password" id="admin-code-input" placeholder="كود فك الشفرة للأدمن..." autocomplete="off" />
+      <button class="btn btn-dark" style="margin:0;padding:7px 12px;font-size:12px;" id="btn-admin-unlock">تفعيل</button>
+    </div>
+    <div id="admin-status" class="ok-msg" style="margin-top:4px;"></div>
+    <button class="btn btn-dark btn-sm" id="btn-signout">تسجيل خروج</button>
+  </div>
+
+  <!-- Friends Screen -->
+  <div id="friends-screen" class="screen hidden">
+    <h1>الأصدقاء</h1>
+    <p class="sub">ابحث عن أي لاعب باليوزر بتاعه وابعتله Add Friend.</p>
+
+    <div style="display:flex;gap:6px;width:100%;max-width:350px;margin-bottom:6px;">
+      <input type="text" id="search-user-input" class="field" style="margin:0;flex:1;" placeholder="ابحث باليوزر نيم..." />
+      <button class="btn btn-friend" style="margin:0;padding:8px 14px;" id="btn-search-user">بحث</button>
+    </div>
+    <div id="friend-feedback" class="ok-msg"></div>
+
+    <div class="panel-box" id="search-results-box">
+      <div style="font-size:11px;color:#aaa;margin-bottom:4px;">نتيجة البحث:</div>
+      <div id="search-results-list" style="font-size:12px;color:#ccc;">اكتب يوزر واضغط بحث</div>
+    </div>
+
+    <div class="panel-box">
+      <div style="font-size:11px;color:#ffdd59;margin-bottom:4px;">طلبات الصداقة الواردة:</div>
+      <div id="incoming-requests-list"></div>
+
+      <div style="font-size:11px;color:#2ed573;margin:8px 0 4px;">قائمة أصدقائك:</div>
+      <div id="my-friends-list"></div>
+    </div>
+
+    <button class="btn btn-dark" id="btn-close-friends">رجوع للقائمة</button>
   </div>
 
   <!-- Game Over Screen -->
-  <div id="gameover-screen" class="overlay-screen hidden">
-    <div class="game-title" style="color:#ff4757;">وقعت!</div>
-    <p class="subtitle" id="final-stats" style="font-size:16px;color:#fff;"></p>
-    <p class="subtitle" id="best-stats" style="color:#ffdd59;"></p>
-    <button class="btn" id="restart-btn">العب تاني</button>
-    <button class="btn btn-secondary" id="change-char-btn">تغيير الشخصية</button>
+  <div id="gameover-screen" class="screen hidden">
+    <h1 style="color:#ff4757;">انتهت الجولة!</h1>
+    <p class="sub" id="go-summary"></p>
+    <button class="btn btn-mode" id="btn-retry">العب تاني</button>
+    <button class="btn btn-dark" id="btn-back-hub">العودة للقائمة</button>
   </div>
 
-  <!-- Mobile Controls (Elevated clearly above browser bar) -->
-  <div id="mobile-controls">
-    <div class="touch-group">
-      <div class="touch-btn" id="btn-right">➡️</div>
-      <div class="touch-btn" id="btn-left">⬅️</div>
+  <div id="pad">
+    <div class="pad-group">
+      <div class="tbtn" id="t-right">➡️</div>
+      <div class="tbtn" id="t-left">⬅️</div>
     </div>
-    <div class="touch-group">
-      <div class="touch-btn" id="btn-jump">نط ⬆️</div>
+    <div class="pad-group">
+      <div class="tbtn jump" id="t-jump">نط</div>
     </div>
   </div>
 </div>
 
+<!-- Firebase Compat SDKs -->
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database-compat.js"></script>
+
 <script>
-const canvas = document.getElementById('gameCanvas');
-const ctx = canvas.getContext('2d');
-
-const CHARACTERS = [
-  { id: 'darwin', name: 'داروين', role: 'مصمم اللعبة (الأساسي)', badge: 'الأساسي ⭐', isMain: true },
-  { id: 'abyusif', name: 'ابيوسف', role: 'تيشيرت DAR & شنطة', badge: null, isMain: false },
-  { id: 'seif', name: 'سيف', role: 'سويت شيرت أسود', badge: null, isMain: false },
-  { id: 'youssef_hamada', name: 'يوسف حماده', role: 'كاب أسود & أبيض', badge: null, isMain: false }
-];
-
-let selectedCharId = localStorage.getItem('icy_selected_char') || 'darwin';
-
-const AudioCtx = window.AudioContext || window.webkitAudioContext;
-let audioCtx = null;
-
-function playSound(type, pitchMod = 1) {
-  try {
-    if (!audioCtx) audioCtx = new AudioCtx();
-    if (audioCtx.state === 'suspended') audioCtx.resume();
-    const osc = audioCtx.createOscillator();
-    const gain = audioCtx.createGain();
-    osc.connect(gain);
-    gain.connect(audioCtx.destination);
-    const now = audioCtx.currentTime;
-
-    if (type === 'select') {
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(520, now);
-      osc.frequency.exponentialRampToValueAtTime(780, now + 0.08);
-      gain.gain.setValueAtTime(0.12, now);
-      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.09);
-      osc.start(now);
-      osc.stop(now + 0.09);
-    } else if (type === 'jump') {
-      osc.type = 'square';
-      osc.frequency.setValueAtTime(210 * pitchMod, now);
-      osc.frequency.exponentialRampToValueAtTime(510 * pitchMod, now + 0.13);
-      gain.gain.setValueAtTime(0.12, now);
-      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.14);
-      osc.start(now);
-      osc.stop(now + 0.14);
-    } else if (type === 'combo') {
-      osc.type = 'square';
-      osc.frequency.setValueAtTime(420 * pitchMod, now);
-      osc.frequency.setValueAtTime(630 * pitchMod, now + 0.06);
-      osc.frequency.setValueAtTime(880 * pitchMod, now + 0.12);
-      gain.gain.setValueAtTime(0.14, now);
-      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
-      osc.start(now);
-      osc.stop(now + 0.25);
-    } else if (type === 'season') {
-      osc.type = 'sawtooth';
-      osc.frequency.setValueAtTime(280, now);
-      osc.frequency.linearRampToValueAtTime(680, now + 0.3);
-      gain.gain.setValueAtTime(0.14, now);
-      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.35);
-      osc.start(now);
-      osc.stop(now + 0.35);
-    } else if (type === 'gameover') {
-      osc.type = 'sawtooth';
-      osc.frequency.setValueAtTime(240, now);
-      osc.frequency.linearRampToValueAtTime(65, now + 0.45);
-      gain.gain.setValueAtTime(0.2, now);
-      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.48);
-      osc.start(now);
-      osc.stop(now + 0.48);
-    }
-  } catch (e) {}
-}
-
-// Accurate Mobile Viewport Sizing (Fixes Safari/Chrome bottom bar overlap!)
-let W = 480, H = 800;
-let GROUND_OFFSET = 115; // Leaves clean breathing room at bottom so controls never cover the player
-
-function resize() {
-  const wrapper = document.getElementById('game-wrapper');
-  const vh = window.visualViewport ? window.visualViewport.height : window.innerHeight;
-  wrapper.style.height = vh + 'px';
-  W = wrapper.clientWidth;
-  H = wrapper.clientHeight;
-  canvas.width = W;
-  canvas.height = H;
-  GROUND_OFFSET = W <= 500 ? 115 : 65;
-}
-window.addEventListener('resize', resize);
-if (window.visualViewport) {
-  window.visualViewport.addEventListener('resize', resize);
-}
-resize();
-
-const SEASONS = [
-  {
-    id: 'summer',
-    minFloor: 0,
-    name: '☀️ الصيف (جو حر)',
-    banner: '☀️ الصيف الحار - ابدأ الصعود!',
-    brickBg: '#2e241f',
-    brickFill: '#4a382e',
-    brickHighlight: '#634b3e',
-    wallFill: '#5c4332',
-    wallEdge: '#805e46',
-    platBase: '#8c6239',
-    platTop: '#f1c40f',
-    friction: 0.84,
-    gravity: 0.58
-  },
-  {
-    id: 'autumn',
-    minFloor: 50,
-    name: '🍂 الخريف',
-    banner: '🍂 دخلنا الخريف - أوراق الشجر!',
-    brickBg: '#261a1d',
-    brickFill: '#3d282c',
-    brickHighlight: '#57393f',
-    wallFill: '#4d2d25',
-    wallEdge: '#734337',
-    platBase: '#6e352c',
-    platTop: '#e67e22',
-    friction: 0.85,
-    gravity: 0.60
-  },
-  {
-    id: 'rain',
-    minFloor: 100,
-    name: '🌧️ أمطار غزيرة',
-    banner: '🌧️ الجو بيمطر - الأرض مبلولة!',
-    brickBg: '#181c24',
-    brickFill: '#272e3b',
-    brickHighlight: '#364052',
-    wallFill: '#2c3545',
-    wallEdge: '#435169',
-    platBase: '#4b6584',
-    platTop: '#778ca3',
-    friction: 0.91,
-    gravity: 0.62
-  },
-  {
-    id: 'snow',
-    minFloor: 150,
-    name: '❄️ عاصفة ثلجية',
-    banner: '❄️ تلج! استايل آيس تاور الأصلي!',
-    brickBg: '#1b1926',
-    brickFill: '#2d2a3e',
-    brickHighlight: '#3f3b57',
-    wallFill: '#35324a',
-    wallEdge: '#524d73',
-    platBase: '#8395a7',
-    platTop: '#ffffff',
-    friction: 0.955,
-    gravity: 0.63
-  },
-  {
-    id: 'storm',
-    minFloor: 220,
-    name: '⚡ عاصفة البرق',
-    banner: '⚡ مستوى الوحوش - برق وسرعة!',
-    brickBg: '#110e1b',
-    brickFill: '#1e1930',
-    brickHighlight: '#2e264a',
-    wallFill: '#241e38',
-    wallEdge: '#483d70',
-    platBase: '#341f97',
-    platTop: '#a55eea',
-    friction: 0.93,
-    gravity: 0.66
-  }
-];
-
-let gameState = 'START';
-let score = 0;
-let bestScore = parseInt(localStorage.getItem('icy_darwin_crew_best') || '0');
-document.getElementById('best-val').innerText = bestScore;
-
-let cameraY = 0;
-let autoScrollSpeed = 0;
-let currentSeasonIndex = 0;
-let difficultyLevel = 1;
-let platforms = [];
-let particles = [];
-let floatingTexts = [];
-let lightningFlash = 0;
-
-const player = {
-  x: W / 2,
-  y: H - 150,
-  w: 44,
-  h: 68,
-  vx: 0,
-  vy: 0,
-  grounded: false,
-  facing: 1,
-  spinAngle: 0,
-  isSpinning: false,
-  lastFloor: 0,
-  comboCount: 0,
-  comboTimer: 0,
-  maxComboTime: 180,
-  walkFrame: 0
+// =========================================================================
+// 1. FIREBASE INITIALIZATION (icedarwin-944f3)
+// =========================================================================
+const firebaseConfig = {
+  apiKey: "AIzaSyBMKpp-Y3UsUt2FIWLLCqQyjPA6PxPbRjA",
+  authDomain: "icedarwin-944f3.firebaseapp.com",
+  databaseURL: "https://icedarwin-944f3-default-rtdb.firebaseio.com",
+  projectId: "icedarwin-944f3",
+  storageBucket: "icedarwin-944f3.firebasestorage.app",
+  messagingSenderId: "339900940155",
+  appId: "1:339900940155:web:e2c7ddc8c8bc76c578c7de",
+  measurementId: "G-75LVLJHBQE"
 };
 
-const keys = { left: false, right: false, jump: false };
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.database();
 
-window.addEventListener('keydown', (e) => {
-  if (e.code === 'ArrowLeft' || e.code === 'KeyA') keys.left = true;
-  if (e.code === 'ArrowRight' || e.code === 'KeyD') keys.right = true;
-  if (e.code === 'Space' || e.code === 'ArrowUp' || e.code === 'KeyW') {
-    if (!keys.jump) triggerJump();
-    keys.jump = true;
+let authUid = null;
+const authReadyPromise = (async () => {
+  try {
+    if (!auth.currentUser) {
+      await auth.signInAnonymously();
+    }
+    authUid = auth.currentUser ? auth.currentUser.uid : null;
+  } catch (e) {
+    console.warn("Anonymous auth warning:", e);
+  }
+})();
+
+// =========================================================================
+// 2. HASHING & CLOUD ACCOUNT ENGINE
+// =========================================================================
+async function sha256Hex(text) {
+  const buf = new TextEncoder().encode(text);
+  const hashBuf = await crypto.subtle.digest("SHA-256", buf);
+  return Array.from(new Uint8Array(hashBuf)).map(b => b.toString(16).padStart(2, "0")).join("");
+}
+
+const ADMIN_DIGEST_HEX = "50449398a6f082807a0bb2f13b94339359596592801f1f72191c814011dc213a";
+const SESSION_KEY = "icy_darwin_cloud_user_v1";
+
+function normalizeUsername(raw) {
+  return String(raw || "").trim().toLowerCase().replace(/[^a-z0-9_]/g, "");
+}
+
+async function readAccount(username) {
+  await authReadyPromise;
+  const snap = await db.ref("accounts/" + username).get();
+  return snap.exists() ? snap.val() : null;
+}
+
+async function writeAccount(username, accObj) {
+  await authReadyPromise;
+  await db.ref("accounts/" + username).set(accObj);
+}
+
+async function patchAccount(username, partialObj) {
+  await authReadyPromise;
+  await db.ref("accounts/" + username).update(partialObj);
+}
+
+const CHARACTERS = [
+  { id: "darwin", name: "داروين", price: 0, color: "#151518", glasses: true },
+  { id: "abyusif", name: "ابيوسف", price: 150, color: "#f5f6fa", glasses: false },
+  { id: "seif", name: "سيف", price: 250, color: "#1e272e", glasses: false },
+  { id: "hamada", name: "يوسف حماده", price: 350, color: "#ffffff", glasses: false }
+];
+
+const SEASONS = [
+  { min: 0, label: "☀️ الصيف (حر)", sky: "#3b2820", plat: "#f1c40f", friction: 0.85 },
+  { min: 50, label: "🍂 الخريف", sky: "#2e1d27", plat: "#e67e22", friction: 0.86 },
+  { min: 100, label: "🌧️ المطر", sky: "#182230", plat: "#45aaf2", friction: 0.91 },
+  { min: 150, label: "❄️ الثلج", sky: "#1a2238", plat: "#ffffff", friction: 0.955 }
+];
+
+let currentUser = null;
+
+function applyAdminState(acc) {
+  acc.isAdmin = true;
+  acc.unlocked = CHARACTERS.map(c => c.id);
+  acc.level = Math.max(acc.level || 1, 99);
+  acc.coins = Math.max(acc.coins || 0, 999999);
+}
+
+async function persistCurrentUser() {
+  if (!currentUser) return;
+  await patchAccount(currentUser.username, {
+    coins: currentUser.coins,
+    bestScore: currentUser.bestScore,
+    level: currentUser.level,
+    unlocked: currentUser.unlocked,
+    selectedChar: currentUser.selectedChar,
+    isAdmin: Boolean(currentUser.isAdmin),
+    friends: currentUser.friends || [],
+    incomingRequests: currentUser.incomingRequests || []
+  });
+}
+
+// =========================================================================
+// 3. AUTHENTICATION (UNIQUE USERNAME + PASSWORD)
+// =========================================================================
+let authMode = "register";
+const tabReg = document.getElementById("tab-register");
+const tabLog = document.getElementById("tab-login");
+const authSubmitBtn = document.getElementById("btn-auth-submit");
+const authMsg = document.getElementById("auth-msg");
+
+tabReg.addEventListener("click", () => {
+  authMode = "register";
+  tabReg.classList.add("active");
+  tabLog.classList.remove("active");
+  authSubmitBtn.textContent = "إنشاء الحساب";
+  authMsg.textContent = "";
+});
+
+tabLog.addEventListener("click", () => {
+  authMode = "login";
+  tabLog.classList.add("active");
+  tabReg.classList.remove("active");
+  authSubmitBtn.textContent = "تسجيل الدخول";
+  authMsg.textContent = "";
+});
+
+authSubmitBtn.addEventListener("click", async () => {
+  const cleanUser = normalizeUsername(document.getElementById("auth-user").value);
+  const rawPass = document.getElementById("auth-pass").value;
+
+  if (cleanUser.length < 3) {
+    authMsg.textContent = "اليوزر لازم يكون 3 حروف/أرقام على الأقل (إنجليزي أو أرقام أو _).";
+    return;
+  }
+  if (rawPass.length < 4) {
+    authMsg.textContent = "الباسورد لازم يكون 4 أحرف أو أكتر.";
+    return;
+  }
+
+  authSubmitBtn.disabled = true;
+  authMsg.textContent = "جاري التحقق...";
+
+  try {
+    await authReadyPromise;
+    const passHash = await sha256Hex(rawPass);
+    const existing = await readAccount(cleanUser);
+
+    if (authMode === "register") {
+      if (existing) {
+        authMsg.textContent = "اليوزر ده مستخدم بالفعل، اختار يوزر تاني.";
+        authSubmitBtn.disabled = false;
+        return;
+      }
+      const newAcc = {
+        username: cleanUser,
+        ownerUid: authUid || ("local_" + Date.now()),
+        passHash,
+        coins: 0,
+        bestScore: 0,
+        level: 1,
+        unlocked: ["darwin"],
+        selectedChar: "darwin",
+        isAdmin: false,
+        friends: [],
+        incomingRequests: []
+      };
+      await writeAccount(cleanUser, newAcc);
+      currentUser = newAcc;
+      localStorage.setItem(SESSION_KEY, cleanUser);
+      authMsg.textContent = "";
+      openHub();
+    } else {
+      if (!existing) {
+        authMsg.textContent = "اليوزر ده مش موجود، اعمل حساب جديد الأول.";
+        authSubmitBtn.disabled = false;
+        return;
+      }
+      if (existing.passHash !== passHash) {
+        authMsg.textContent = "الباسورد غلط.";
+        authSubmitBtn.disabled = false;
+        return;
+      }
+      currentUser = {
+        friends: [],
+        incomingRequests: [],
+        unlocked: ["darwin"],
+        selectedChar: "darwin",
+        ...existing
+      };
+      if (currentUser.isAdmin) applyAdminState(currentUser);
+      localStorage.setItem(SESSION_KEY, cleanUser);
+      authMsg.textContent = "";
+      openHub();
+    }
+  } catch (err) {
+    authMsg.textContent = "حدث خطأ في الاتصال: " + err.message;
+  } finally {
+    authSubmitBtn.disabled = false;
   }
 });
-window.addEventListener('keyup', (e) => {
-  if (e.code === 'ArrowLeft' || e.code === 'KeyA') keys.left = false;
-  if (e.code === 'ArrowRight' || e.code === 'KeyD') keys.right = false;
-  if (e.code === 'Space' || e.code === 'ArrowUp' || e.code === 'KeyW') keys.jump = false;
-});
 
-function bindTouch(id, keyName, isJump = false) {
-  const el = document.getElementById(id);
-  const activate = (e) => {
-    if (e.cancelable) e.preventDefault();
-    keys[keyName] = true;
-    el.classList.add('active');
-    if (isJump) triggerJump();
-  };
-  const deactivate = (e) => {
-    if (e.cancelable) e.preventDefault();
-    keys[keyName] = false;
-    el.classList.remove('active');
-  };
+// =========================================================================
+// 4. FRIENDS SYSTEM
+// =========================================================================
+function refreshFriendsUI() {
+  if (!currentUser) return;
+  const reqs = currentUser.incomingRequests || [];
+  const friends = currentUser.friends || [];
+  document.getElementById("req-count").textContent = reqs.length;
 
-  el.addEventListener('touchstart', activate, { passive: false });
-  el.addEventListener('touchend', deactivate, { passive: false });
-  el.addEventListener('touchcancel', deactivate, { passive: false });
-  el.addEventListener('mousedown', activate);
-  el.addEventListener('mouseup', deactivate);
-  el.addEventListener('mouseleave', deactivate);
-}
-bindTouch('btn-left', 'left');
-bindTouch('btn-right', 'right');
-bindTouch('btn-jump', 'jump', true);
+  const reqBox = document.getElementById("incoming-requests-list");
+  if (reqs.length === 0) {
+    reqBox.innerHTML = '<div style="font-size:11px;color:#999;">لا توجد طلبات صداقة حالياً</div>';
+  } else {
+    reqBox.innerHTML = "";
+    reqs.forEach(sender => {
+      const row = document.createElement("div");
+      row.className = "list-row";
+      row.innerHTML = `<span>@${escapeHtml(sender)}</span><div></div>`;
+      const actions = row.querySelector("div");
 
-// Bonus: Direct Screen Touch / Swipe Controls for effortless one-hand or two-thumb phone play
-let touchMoveId = null;
-let touchStartX = 0;
+      const acceptBtn = document.createElement("button");
+      acceptBtn.className = "btn btn-mode btn-sm";
+      acceptBtn.textContent = "قبول";
+      acceptBtn.onclick = async () => {
+        currentUser.incomingRequests = (currentUser.incomingRequests || []).filter(u => u !== sender);
+        currentUser.friends = Array.from(new Set([...(currentUser.friends || []), sender]));
 
-canvas.addEventListener('touchstart', (e) => {
-  if (gameState !== 'PLAYING') return;
-  for (let t of e.changedTouches) {
-    if (touchMoveId === null) {
-      touchMoveId = t.identifier;
-      touchStartX = t.clientX;
-      // Tapping upper half of screen also jumps
-      if (t.clientY < H * 0.65) {
-        triggerJump();
-      }
-    } else {
-      // Second finger tap anywhere jumps!
-      triggerJump();
-    }
-  }
-}, { passive: true });
+        const senderAcc = await readAccount(sender);
+        if (senderAcc) {
+          const sFriends = Array.from(new Set([...(senderAcc.friends || []), currentUser.username]));
+          await patchAccount(sender, { friends: sFriends });
+        }
+        await persistCurrentUser();
+        refreshFriendsUI();
+      };
 
-canvas.addEventListener('touchmove', (e) => {
-  if (gameState !== 'PLAYING') return;
-  for (let t of e.changedTouches) {
-    if (t.identifier === touchMoveId) {
-      const dx = t.clientX - touchStartX;
-      if (dx < -14) {
-        keys.left = true;
-        keys.right = false;
-      } else if (dx > 14) {
-        keys.right = true;
-        keys.left = false;
-      } else {
-        keys.left = false;
-        keys.right = false;
-      }
-    }
-  }
-}, { passive: true });
+      const rejectBtn = document.createElement("button");
+      rejectBtn.className = "btn btn-dark btn-sm";
+      rejectBtn.textContent = "رفض";
+      rejectBtn.onclick = async () => {
+        currentUser.incomingRequests = (currentUser.incomingRequests || []).filter(u => u !== sender);
+        await persistCurrentUser();
+        refreshFriendsUI();
+      };
 
-canvas.addEventListener('touchend', (e) => {
-  for (let t of e.changedTouches) {
-    if (t.identifier === touchMoveId) {
-      touchMoveId = null;
-      keys.left = false;
-      keys.right = false;
-    }
-  }
-}, { passive: true });
-
-function triggerJump() {
-  if (gameState !== 'PLAYING') return;
-  if (player.grounded) {
-    const speedBonus = Math.abs(player.vx) * 0.72;
-    player.vy = -(13.2 + speedBonus);
-    player.grounded = false;
-
-    if (Math.abs(player.vx) > 5.5) {
-      player.isSpinning = true;
-      player.spinAngle = 0;
-      playSound('jump', 1.35);
-    } else {
-      player.isSpinning = false;
-      playSound('jump', 1.0);
-    }
-  }
-}
-
-const WALL_WIDTH = 24;
-const FLOOR_GAP = 92;
-
-function createPlatform(floorNum) {
-  const y = H - GROUND_OFFSET - floorNum * FLOOR_GAP;
-  if (floorNum === 0) {
-    return {
-      floor: 0,
-      x: WALL_WIDTH,
-      y: y,
-      w: W - WALL_WIDTH * 2,
-      h: 24,
-      vx: 0,
-      isMilestone: true
-    };
+      actions.appendChild(acceptBtn);
+      actions.appendChild(rejectBtn);
+      reqBox.appendChild(row);
+    });
   }
 
-  const shrink = Math.min(85, floorNum * 0.32);
-  const minW = Math.max(85, (W * 0.30) - shrink);
-  const maxW = Math.max(125, (W * 0.48) - shrink);
-  const isMilestone = floorNum % 50 === 0;
-
-  const w = isMilestone ? (W - WALL_WIDTH * 2) : (minW + Math.random() * (maxW - minW));
-  const minX = WALL_WIDTH + 6;
-  const maxX = W - WALL_WIDTH - w - 6;
-  const x = isMilestone ? WALL_WIDTH : (minX + Math.random() * Math.max(10, maxX - minX));
-
-  let vx = 0;
-  if (!isMilestone && floorNum > 25 && Math.random() < Math.min(0.45, floorNum / 400)) {
-    vx = (Math.random() < 0.5 ? -1 : 1) * (1.2 + Math.min(3.0, floorNum / 90));
-  }
-
-  return { floor: floorNum, x, y, w, h: 20, vx, isMilestone };
-}
-
-function initParticles(seasonId) {
-  particles = [];
-  const count = seasonId === 'rain' || seasonId === 'storm' ? 90 : (seasonId === 'snow' ? 75 : (seasonId === 'autumn' ? 25 : 14));
-  for (let i = 0; i < count; i++) {
-    particles.push({
-      x: Math.random() * W,
-      y: Math.random() * H,
-      speedY: (seasonId === 'rain' || seasonId === 'storm') ? (11 + Math.random() * 6) : (1.5 + Math.random() * 2.5),
-      speedX: (seasonId === 'rain' || seasonId === 'storm') ? -2 : (Math.random() * 2 - 1),
-      size: (seasonId === 'rain' || seasonId === 'storm') ? 13 : (3 + Math.random() * 4),
-      angle: Math.random() * Math.PI * 2
+  const fBox = document.getElementById("my-friends-list");
+  if (friends.length === 0) {
+    fBox.innerHTML = '<div style="font-size:11px;color:#999;">لسه معندكش أصدقاء مضافين</div>';
+  } else {
+    fBox.innerHTML = "";
+    friends.forEach(fUser => {
+      const row = document.createElement("div");
+      row.className = "list-row";
+      row.innerHTML = `<span>@${escapeHtml(fUser)}</span><span style="color:#2ed573;">صديق ✓</span>`;
+      fBox.appendChild(row);
     });
   }
 }
 
-function showBanner(text) {
-  const banner = document.getElementById('season-banner');
-  banner.innerText = text;
-  banner.style.opacity = '1';
-  banner.style.transform = 'translate(-50%, -50%) scale(1)';
-  setTimeout(() => {
-    banner.style.opacity = '0';
-    banner.style.transform = 'translate(-50%, -50%) scale(0.8)';
-  }, 2300);
+document.getElementById("btn-search-user").addEventListener("click", async () => {
+  const target = normalizeUsername(document.getElementById("search-user-input").value);
+  const resList = document.getElementById("search-results-list");
+  const fb = document.getElementById("friend-feedback");
+  fb.textContent = "";
+
+  if (!target) {
+    resList.innerHTML = "اكتب يوزر صحيح للبحث.";
+    return;
+  }
+  if (target === currentUser.username) {
+    resList.innerHTML = "ده اليوزر بتاعك إنت!";
+    return;
+  }
+
+  const found = await readAccount(target);
+  if (!found) {
+    resList.innerHTML = `<span style="color:#ff4757;">مفيش حساب باليوزر @${escapeHtml(target)}</span>`;
+    return;
+  }
+
+  const alreadyFriend = (currentUser.friends || []).includes(target);
+  const alreadySent = (found.incomingRequests || []).includes(currentUser.username);
+
+  resList.innerHTML = "";
+  const row = document.createElement("div");
+  row.className = "list-row";
+  row.innerHTML = `<span>@${escapeHtml(found.username)} (ليفل ${found.level || 1})</span>`;
+
+  const actionBtn = document.createElement("button");
+  actionBtn.className = "btn btn-friend btn-sm";
+  if (alreadyFriend) {
+    actionBtn.textContent = "صديق بالفعل";
+    actionBtn.disabled = true;
+  } else if (alreadySent) {
+    actionBtn.textContent = "تم إرسال الطلب";
+    actionBtn.disabled = true;
+  } else {
+    actionBtn.textContent = "Add Friend";
+    actionBtn.onclick = async () => {
+      const latestTarget = await readAccount(target);
+      if (!latestTarget) return;
+      const updatedReqs = Array.from(new Set([...(latestTarget.incomingRequests || []), currentUser.username]));
+      await patchAccount(target, { incomingRequests: updatedReqs });
+      actionBtn.textContent = "تم إرسال الطلب";
+      actionBtn.disabled = true;
+      fb.style.color = "#2ed573";
+      fb.textContent = `تم إرسال طلب صداقة لـ @${target}`;
+    };
+  }
+
+  row.appendChild(actionBtn);
+  resList.appendChild(row);
+});
+
+document.getElementById("btn-open-friends").addEventListener("click", async () => {
+  if (currentUser) {
+    const fresh = await readAccount(currentUser.username);
+    if (fresh) currentUser = { ...currentUser, ...fresh };
+  }
+  refreshFriendsUI();
+  document.getElementById("hub-screen").classList.add("hidden");
+  document.getElementById("friends-screen").classList.remove("hidden");
+});
+
+document.getElementById("btn-close-friends").addEventListener("click", () => {
+  document.getElementById("friends-screen").classList.add("hidden");
+  document.getElementById("hub-screen").classList.remove("hidden");
+  syncUI();
+});
+
+// =========================================================================
+// 5. HUB, STORE, ADMIN & MULTIPLAYER SYNC
+// =========================================================================
+function escapeHtml(str) {
+  return String(str).replace(/[&<>"']/g, m => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[m]));
+}
+
+function syncUI() {
+  if (!currentUser) return;
+  document.getElementById("ui-score").textContent = score;
+  document.getElementById("ui-floor").textContent = player.floor;
+  document.getElementById("ui-coins").textContent = currentUser.coins;
+  document.getElementById("hub-coins").textContent = currentUser.coins;
+  document.getElementById("hub-best").textContent = currentUser.bestScore;
+  document.getElementById("hub-level").textContent = currentUser.level;
+  document.getElementById("req-count").textContent = (currentUser.incomingRequests || []).length;
+
+  const badge = currentUser.isAdmin ? '<span class="dev-tag">مطور اللعبة</span>' : '';
+  document.getElementById("ui-user").innerHTML = `${badge}@${escapeHtml(currentUser.username)}`;
+  document.getElementById("hub-title").innerHTML = `${badge}@${escapeHtml(currentUser.username)}`;
+  renderStore();
+}
+
+function renderStore() {
+  const container = document.getElementById("char-list");
+  container.innerHTML = "";
+  if (!currentUser) return;
+
+  CHARACTERS.forEach(ch => {
+    const owned = currentUser.isAdmin || (currentUser.unlocked || []).includes(ch.id);
+    const active = currentUser.selectedChar === ch.id;
+    const div = document.createElement("div");
+    div.className = "card" + (active ? " active" : "");
+    div.innerHTML = `
+      <div>${ch.name}</div>
+      <div style="color:${owned ? '#2ed573' : '#ffdd59'};margin-top:4px;">
+        ${active ? "مختار ✓" : (owned ? "اختيار" : ch.price + " 🪙")}
+      </div>
+    `;
+    div.addEventListener("click", async () => {
+      if (owned) {
+        currentUser.selectedChar = ch.id;
+      } else if (currentUser.coins >= ch.price) {
+        currentUser.coins -= ch.price;
+        currentUser.unlocked = Array.from(new Set([...(currentUser.unlocked || []), ch.id]));
+        currentUser.selectedChar = ch.id;
+      } else {
+        alert("عملاتك غير كافية. اجمع سكور أعلى للحصول على عملات!");
+        return;
+      }
+      await persistCurrentUser();
+      syncUI();
+      publishRoomState();
+    });
+    container.appendChild(div);
+  });
+}
+
+let roomPlayers = {};
+let traitorUser = null;
+let roomSubscribed = false;
+
+function subscribeRoom() {
+  if (roomSubscribed) return;
+  roomSubscribed = true;
+  db.ref("rooms/main/players").on("value", snap => {
+    roomPlayers = snap.val() || {};
+  });
+  db.ref("rooms/main/shipTraitor").on("value", snap => {
+    traitorUser = snap.val();
+    if (gameMode === "ship") evaluateShipRole();
+  });
+}
+
+async function publishRoomState() {
+  if (!currentUser) return;
+  await authReadyPromise;
+  const ref = db.ref("rooms/main/players/" + currentUser.username);
+  ref.onDisconnect().remove();
+  await ref.set({
+    username: currentUser.username,
+    isAdmin: Boolean(currentUser.isAdmin),
+    char: currentUser.selectedChar,
+    x: player.x,
+    y: player.y,
+    mode: gameMode,
+    ts: Date.now()
+  });
+}
+
+function openHub() {
+  document.getElementById("auth-screen").classList.add("hidden");
+  document.getElementById("gameover-screen").classList.add("hidden");
+  document.getElementById("friends-screen").classList.add("hidden");
+  document.getElementById("hub-screen").classList.remove("hidden");
+  gameState = "HUB";
+  syncUI();
+  subscribeRoom();
+  publishRoomState();
+}
+
+document.getElementById("btn-signout").addEventListener("click", async () => {
+  if (currentUser) {
+    try { await db.ref("rooms/main/players/" + currentUser.username).remove(); } catch {}
+  }
+  localStorage.removeItem(SESSION_KEY);
+  currentUser = null;
+  gameState = "AUTH";
+  document.getElementById("hub-screen").classList.add("hidden");
+  document.getElementById("auth-screen").classList.remove("hidden");
+  document.getElementById("auth-user").value = "";
+  document.getElementById("auth-pass").value = "";
+  authMsg.textContent = "";
+});
+
+document.getElementById("btn-admin-unlock").addEventListener("click", async () => {
+  if (!currentUser) return;
+  const inputEl = document.getElementById("admin-code-input");
+  const raw = inputEl.value.trim();
+  inputEl.value = "";
+  const statusEl = document.getElementById("admin-status");
+  const digest = await sha256Hex(raw);
+  if (digest === ADMIN_DIGEST_HEX) {
+    applyAdminState(currentUser);
+    await persistCurrentUser();
+    statusEl.style.color = "#2ed573";
+    statusEl.textContent = "✅ تم تفعيل صلاحيات الأدمن وفتح كل الشخصيات والليفلات!";
+    syncUI();
+    publishRoomState();
+  } else {
+    statusEl.style.color = "#ff4757";
+    statusEl.textContent = "❌ كود غير صحيح.";
+  }
+});
+
+function evaluateShipRole() {
+  const banner = document.getElementById("role-banner");
+  const isTraitor = (traitorUser === currentUser.username);
+  banner.style.display = "block";
+  if (isTraitor) {
+    banner.style.borderColor = "#ff4757";
+    banner.style.color = "#ff6b81";
+    banner.textContent = "🗡️ أنت الخائن وسط المركبة! لا تكشف نفسك.";
+  } else if (currentUser.isAdmin) {
+    banner.style.borderColor = "#ffdd59";
+    banner.style.color = "#ffdd59";
+    banner.textContent = `👑 وضع الأدمن: الخائن هو @${traitorUser || "غير محدد"}`;
+  } else {
+    banner.style.borderColor = "#2ed573";
+    banner.style.color = "#2ed573";
+    banner.textContent = "🚀 أنت من طاقم المركبة! ابحث عن الخائن.";
+  }
+}
+
+async function startShipMode() {
+  gameMode = "ship";
+  document.getElementById("hub-screen").classList.add("hidden");
+  resetGame();
+  await publishRoomState();
+  const snap = await db.ref("rooms/main/players").get();
+  const list = snap.exists() ? Object.keys(snap.val()) : [currentUser.username];
+  if (!list.includes(currentUser.username)) list.push(currentUser.username);
+  const chosen = list[Math.floor(Math.random() * list.length)];
+  await db.ref("rooms/main/shipTraitor").set(chosen);
+  traitorUser = chosen;
+  evaluateShipRole();
+  gameState = "PLAYING";
+}
+
+// =========================================================================
+// 6. GAMEPLAY LOOP & LIGHTWEIGHT RENDERER
+// =========================================================================
+const canvas = document.getElementById("c");
+const ctx = canvas.getContext("2d", { alpha: false });
+let W = 400, H = 700;
+
+function resizeCanvas() {
+  const app = document.getElementById("app");
+  const dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+  W = app.clientWidth;
+  H = app.clientHeight;
+  canvas.width = Math.floor(W * dpr);
+  canvas.height = Math.floor(H * dpr);
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+window.addEventListener("resize", resizeCanvas);
+resizeCanvas();
+
+let gameMode = "tower";
+let gameState = "AUTH";
+let score = 0;
+let lastEarnedCoinsScore = 0;
+let cameraY = 0;
+let platforms = [];
+
+const player = {
+  x: 180, y: 500, w: 34, h: 48,
+  vx: 0, vy: 0, grounded: false, floor: 0, facing: 1
+};
+
+const input = { left: false, right: false };
+
+function bindBtn(id, key) {
+  const el = document.getElementById(id);
+  const on = e => { if (e.cancelable) e.preventDefault(); input[key] = true; };
+  const off = e => { if (e.cancelable) e.preventDefault(); input[key] = false; };
+  el.addEventListener("touchstart", on, { passive: false });
+  el.addEventListener("touchend", off, { passive: false });
+  el.addEventListener("mousedown", on);
+  el.addEventListener("mouseup", off);
+}
+bindBtn("t-left", "left");
+bindBtn("t-right", "right");
+
+document.getElementById("t-jump").addEventListener("touchstart", e => {
+  if (e.cancelable) e.preventDefault();
+  jump();
+}, { passive: false });
+document.getElementById("t-jump").addEventListener("mousedown", jump);
+
+window.addEventListener("keydown", e => {
+  if (e.code === "ArrowLeft" || e.code === "KeyA") input.left = true;
+  if (e.code === "ArrowRight" || e.code === "KeyD") input.right = true;
+  if (e.code === "Space" || e.code === "ArrowUp") jump();
+});
+window.addEventListener("keyup", e => {
+  if (e.code === "ArrowLeft" || e.code === "KeyA") input.left = false;
+  if (e.code === "ArrowRight" || e.code === "KeyD") input.right = false;
+});
+
+function jump() {
+  if (gameState !== "PLAYING") return;
+  if (player.grounded) {
+    player.vy = -(12.2 + Math.abs(player.vx) * 0.65);
+    player.grounded = false;
+  }
 }
 
 function resetGame() {
-  resize();
   score = 0;
+  lastEarnedCoinsScore = 0;
   cameraY = 0;
-  autoScrollSpeed = 0;
-  currentSeasonIndex = 0;
-  difficultyLevel = 1;
   platforms = [];
-  floatingTexts = [];
-  keys.left = false;
-  keys.right = false;
-  keys.jump = false;
-
-  for (let i = 0; i < 20; i++) {
-    platforms.push(createPlatform(i));
+  for (let i = 0; i < 16; i++) {
+    const pw = i === 0 ? W - 40 : Math.max(75, 145 - Math.min(60, i * 0.3));
+    const px = i === 0 ? 20 : 24 + Math.random() * Math.max(10, W - 48 - pw);
+    platforms.push({ floor: i, x: px, y: H - 110 - i * 88, w: pw, h: 16 });
   }
-
   player.x = W / 2 - player.w / 2;
-  player.y = H - GROUND_OFFSET - player.h;
+  player.y = H - 110 - player.h;
   player.vx = 0;
   player.vy = 0;
   player.grounded = true;
-  player.facing = 1;
-  player.spinAngle = 0;
-  player.isSpinning = false;
-  player.lastFloor = 0;
-  player.comboCount = 0;
-  player.comboTimer = 0;
-
-  initParticles('summer');
-  updateHUD();
-  showBanner(SEASONS[0].banner);
+  player.floor = 0;
+  document.getElementById("role-banner").style.display = "none";
+  syncUI();
 }
 
-function startGame() {
-  document.getElementById('start-screen').classList.add('hidden');
-  document.getElementById('gameover-screen').classList.add('hidden');
-  resetGame();
-  gameState = 'PLAYING';
+function getSeason() {
+  let active = SEASONS[0];
+  for (const s of SEASONS) {
+    if (player.floor >= s.min) active = s;
+  }
+  return active;
 }
 
-document.getElementById('start-btn').addEventListener('click', startGame);
-document.getElementById('restart-btn').addEventListener('click', startGame);
-document.getElementById('change-char-btn').addEventListener('click', () => {
-  document.getElementById('gameover-screen').classList.add('hidden');
-  document.getElementById('start-screen').classList.remove('hidden');
-  gameState = 'START';
-});
+let lastSyncMs = 0;
 
-function updateSeasonAndDifficulty() {
-  let newSeasonIdx = 0;
-  for (let i = SEASONS.length - 1; i >= 0; i--) {
-    if (player.lastFloor >= SEASONS[i].minFloor) {
-      newSeasonIdx = i;
-      break;
-    }
-  }
-  if (newSeasonIdx !== currentSeasonIndex) {
-    currentSeasonIndex = newSeasonIdx;
-    initParticles(SEASONS[currentSeasonIndex].id);
-    showBanner(SEASONS[currentSeasonIndex].banner);
-    playSound('season');
-  }
-  difficultyLevel = 1 + Math.floor(score / 1500);
-}
+function update(now) {
+  if (gameState !== "PLAYING" || !currentUser) return;
+  const season = getSeason();
 
-function updateHUD() {
-  document.getElementById('score-val').innerText = score;
-  document.getElementById('floor-val').innerText = player.lastFloor;
-  document.getElementById('weather-name').innerText = SEASONS[currentSeasonIndex].name;
+  if (input.left) { player.vx -= 0.9; player.facing = -1; }
+  if (input.right) { player.vx += 0.9; player.facing = 1; }
+  if (!input.left && !input.right) player.vx *= player.grounded ? season.friction : 0.96;
 
-  const activeChar = CHARACTERS.find(c => c.id === selectedCharId) || CHARACTERS[0];
-  document.getElementById('active-char-hud').innerText = (activeChar.isMain ? '⭐ ' : '🎮 ') + activeChar.name;
-
-  const diffLabels = ['عادي', 'متوسط', 'سريع', 'صعب', 'جنوني', 'مستحيل'];
-  const label = diffLabels[Math.min(diffLabels.length - 1, difficultyLevel - 1)];
-  document.getElementById('level-name').innerText = `صعوبة ${difficultyLevel} (${label})`;
-
-  const comboBox = document.getElementById('combo-container');
-  if (player.comboCount >= 2 && player.comboTimer > 0) {
-    comboBox.style.opacity = '1';
-    document.getElementById('combo-text').innerText = `COMBO x${player.comboCount}!`;
-    document.getElementById('combo-bar').style.width = `${(player.comboTimer / player.maxComboTime) * 100}%`;
-  } else {
-    comboBox.style.opacity = '0';
-  }
-}
-
-function addFloatingText(text, x, y, color = '#ffdd59') {
-  floatingTexts.push({ text, x, y, color, alpha: 1, vy: -1.5 });
-}
-
-function update() {
-  if (gameState !== 'PLAYING') return;
-
-  const season = SEASONS[currentSeasonIndex];
-  const accel = player.grounded ? (season.id === 'snow' ? 0.58 : 1.0) : 0.76;
-  const maxSpeed = 8.8;
-
-  if (keys.left) {
-    player.vx -= accel;
-    player.facing = -1;
-  }
-  if (keys.right) {
-    player.vx += accel;
-    player.facing = 1;
-  }
-
-  if (!keys.left && !keys.right) {
-    player.vx *= player.grounded ? season.friction : 0.96;
-    if (Math.abs(player.vx) < 0.1) player.vx = 0;
-  }
-
-  if (player.vx > maxSpeed) player.vx = maxSpeed;
-  if (player.vx < -maxSpeed) player.vx = -maxSpeed;
-
+  player.vx = Math.max(-8.5, Math.min(8.5, player.vx));
   player.x += player.vx;
 
-  if (player.x < WALL_WIDTH) {
-    player.x = WALL_WIDTH;
-    player.vx = Math.abs(player.vx) * 0.85;
-    player.facing = 1;
-  } else if (player.x + player.w > W - WALL_WIDTH) {
-    player.x = W - WALL_WIDTH - player.w;
-    player.vx = -Math.abs(player.vx) * 0.85;
-    player.facing = -1;
-  }
+  if (player.x < 18) { player.x = 18; player.vx = Math.abs(player.vx) * 0.8; }
+  if (player.x + player.w > W - 18) { player.x = W - 18 - player.w; player.vx = -Math.abs(player.vx) * 0.8; }
 
   const prevBottom = player.y + player.h;
-  player.vy += season.gravity;
+  player.vy += 0.58;
   player.y += player.vy;
-
-  if (player.isSpinning) {
-    player.spinAngle += 0.28 * player.facing;
-  } else {
-    player.spinAngle = 0;
-  }
-
-  if (player.grounded && Math.abs(player.vx) > 0.5) {
-    player.walkFrame += Math.abs(player.vx) * 0.055;
-  } else {
-    player.walkFrame = 0;
-  }
-
-  for (let p of platforms) {
-    if (p.vx !== 0) {
-      p.x += p.vx;
-      if (p.x <= WALL_WIDTH + 4 || p.x + p.w >= W - WALL_WIDTH - 4) {
-        p.vx *= -1;
-      }
-    }
-  }
-
   player.grounded = false;
+
   if (player.vy >= 0) {
-    for (let p of platforms) {
-      const currBottom = player.y + player.h;
-      const withinX = (player.x + player.w - 6 > p.x) && (player.x + 6 < p.x + p.w);
-      if (withinX && prevBottom <= p.y + 10 && currBottom >= p.y) {
+    for (const p of platforms) {
+      const withinX = player.x + player.w - 5 > p.x && player.x + 5 < p.x + p.w;
+      if (withinX && prevBottom <= p.y + 8 && player.y + player.h >= p.y) {
         player.y = p.y - player.h;
         player.vy = 0;
         player.grounded = true;
-        player.isSpinning = false;
-        player.x += p.vx;
-
-        if (p.floor > player.lastFloor) {
-          const jumpedFloors = p.floor - player.lastFloor;
-          if (jumpedFloors >= 2) {
-            player.comboCount += jumpedFloors;
-            player.comboTimer = player.maxComboTime;
-            const bonus = jumpedFloors * 35 * Math.max(1, Math.floor(player.comboCount / 2));
-            score += bonus;
-
-            const cheers = ['SWEET!', 'GOOD!', 'GREAT!', 'SUPER!', 'IM PAID! 🔥'];
-            const word = cheers[Math.min(cheers.length - 1, Math.floor(player.comboCount / 3))];
-            addFloatingText(`${word} +${bonus}`, player.x + player.w / 2, player.y - 18, '#ffdd59');
-            playSound('combo', 1 + Math.min(0.6, player.comboCount * 0.04));
-          } else {
-            if (player.comboCount >= 2) finishCombo();
-            score += 10;
-          }
-          player.lastFloor = p.floor;
-          updateSeasonAndDifficulty();
+        if (p.floor > player.floor) {
+          score += (p.floor - player.floor) * 15;
+          player.floor = p.floor;
         }
         break;
       }
     }
   }
 
-  if (player.comboTimer > 0) {
-    player.comboTimer--;
-    if (player.comboTimer <= 0 && player.comboCount >= 2) finishCombo();
+  if (score - lastEarnedCoinsScore >= 100) {
+    const gained = Math.floor((score - lastEarnedCoinsScore) / 100) * 10;
+    currentUser.coins += gained;
+    lastEarnedCoinsScore += Math.floor((score - lastEarnedCoinsScore) / 100) * 100;
   }
 
-  if (player.lastFloor >= 1) {
-    const targetAutoSpeed = 0.85 + Math.min(3.6, (player.lastFloor * 0.012) + (score * 0.00012));
-    autoScrollSpeed += (targetAutoSpeed - autoScrollSpeed) * 0.02;
-    cameraY += autoScrollSpeed;
-  }
-
-  const screenY = player.y + cameraY;
-  if (screenY < H * 0.36) {
-    const diff = (H * 0.36) - screenY;
+  const targetScroll = player.floor >= 1 ? 0.9 + Math.min(3.5, player.floor * 0.012 + score * 0.0001) : 0;
+  cameraY += targetScroll;
+  if (player.y + cameraY < H * 0.35) {
+    const diff = H * 0.35 - (player.y + cameraY);
     cameraY += diff;
     score += Math.floor(diff * 0.25);
   }
 
-  let highestFloor = platforms[platforms.length - 1].floor;
-  while (H - GROUND_OFFSET - highestFloor * FLOOR_GAP + cameraY > -200) {
-    highestFloor++;
-    platforms.push(createPlatform(highestFloor));
+  if (score > currentUser.bestScore) {
+    currentUser.bestScore = score;
+    currentUser.level = 1 + Math.floor(currentUser.bestScore / 1000);
   }
 
-  platforms = platforms.filter(p => (p.y + cameraY) < H + 120);
+  const topFloor = platforms[platforms.length - 1].floor;
+  while (H - 110 - topFloor * 88 + cameraY > -160) {
+    const nf = platforms[platforms.length - 1].floor + 1;
+    const pw = Math.max(72, 145 - Math.min(65, nf * 0.3));
+    const px = 24 + Math.random() * Math.max(10, W - 48 - pw);
+    platforms.push({ floor: nf, x: px, y: H - 110 - nf * 88, w: pw, h: 16 });
+  }
+  platforms = platforms.filter(p => p.y + cameraY < H + 100);
 
-  for (let pt of particles) {
-    pt.y += pt.speedY;
-    pt.x += pt.speedX + Math.sin(pt.angle) * 0.5;
-    pt.angle += 0.04;
-    if (pt.y > H) { pt.y = -10; pt.x = Math.random() * W; }
-    if (pt.x < 0) pt.x = W;
-    if (pt.x > W) pt.x = 0;
+  if (player.y + cameraY > H + 10) {
+    gameState = "GAMEOVER";
+    persistCurrentUser();
+    document.getElementById("go-summary").textContent =
+      `السكور: ${score} | أعلى سكور لـ @${currentUser.username}: ${currentUser.bestScore} | عملاتك: ${currentUser.coins} 🪙`;
+    document.getElementById("gameover-screen").classList.remove("hidden");
   }
 
-  if (season.id === 'storm' && Math.random() < 0.004) lightningFlash = 0.75;
-  if (lightningFlash > 0) lightningFlash -= 0.05;
-
-  for (let ft of floatingTexts) {
-    ft.y += ft.vy;
-    ft.alpha -= 0.018;
+  if (now - lastSyncMs > 150) {
+    lastSyncMs = now;
+    publishRoomState();
   }
-  floatingTexts = floatingTexts.filter(ft => ft.alpha > 0);
 
-  if (player.y + cameraY > H + 10) triggerGameOver();
-
-  updateHUD();
+  document.getElementById("ui-weather").textContent = gameMode === "ship" ? "🚀 مركبة الفضاء" : getSeason().label;
+  syncUI();
 }
 
-function finishCombo() {
-  const megaBonus = player.comboCount * 25;
-  score += megaBonus;
-  addFloatingText(`COMBO BONUS +${megaBonus}!`, W / 2, H / 2 - 40, '#2ed573');
-  player.comboCount = 0;
-  player.comboTimer = 0;
-}
+function drawPlayerModel(px, py, charId, uname, isDev, isTraitorHighlight) {
+  const ch = CHARACTERS.find(c => c.id === charId) || CHARACTERS[0];
+  ctx.fillStyle = ch.color;
+  ctx.strokeStyle = "#000";
+  ctx.lineWidth = 2.5;
+  ctx.fillRect(px, py + 16, player.w, player.h - 16);
+  ctx.strokeRect(px, py + 16, player.w, player.h - 16);
 
-function triggerGameOver() {
-  gameState = 'GAMEOVER';
-  playSound('gameover');
-  if (score > bestScore) {
-    bestScore = score;
-    localStorage.setItem('icy_darwin_crew_best', bestScore);
-    document.getElementById('best-val').innerText = bestScore;
-  }
-  const activeChar = CHARACTERS.find(c => c.id === selectedCharId) || CHARACTERS[0];
-  document.getElementById('final-stats').innerText = `الشخصية: ${activeChar.name} | السكور: ${score} | طابق: ${player.lastFloor}`;
-  document.getElementById('best-stats').innerText = `أعلى رقم قياسي: ${bestScore}`;
-  document.getElementById('gameover-screen').classList.remove('hidden');
-}
+  ctx.fillStyle = "#e09f70";
+  ctx.beginPath();
+  ctx.arc(px + player.w / 2, py + 10, 11, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.stroke();
 
-// =========================================================================
-// MULTI-CHARACTER CLASSIC ICY TOWER RENDERER
-// =========================================================================
-function drawCharacterSprite(targetCtx, charId, facing, walkFrame, isSpinning, spinAngle) {
-  targetCtx.save();
-  if (isSpinning) {
-    targetCtx.rotate(spinAngle);
-  }
-  targetCtx.scale(facing, 1);
-
-  const legSwing = Math.sin(walkFrame) * 4.5;
-  targetCtx.lineJoin = 'round';
-  targetCtx.lineCap = 'round';
-
-  if (charId === 'darwin') {
-    targetCtx.lineWidth = 3.2;
-    targetCtx.strokeStyle = '#000000';
-    targetCtx.fillStyle = '#dcd7c9';
-    targetCtx.beginPath();
-    targetCtx.ellipse(-7 - legSwing * 0.7, 29, 9.5, 5.5, 0, 0, Math.PI * 2);
-    targetCtx.fill();
-    targetCtx.stroke();
-
-    targetCtx.fillStyle = '#f2efe9';
-    targetCtx.beginPath();
-    targetCtx.ellipse(8 + legSwing * 0.7, 29, 10, 5.5, 0, 0, Math.PI * 2);
-    targetCtx.fill();
-    targetCtx.stroke();
-
-    targetCtx.fillStyle = '#5d6166';
-    targetCtx.beginPath();
-    targetCtx.moveTo(-15, 11);
-    targetCtx.lineTo(15, 11);
-    targetCtx.lineTo(17 + legSwing * 0.5, 26);
-    targetCtx.lineTo(3 + legSwing * 0.5, 26);
-    targetCtx.lineTo(0, 19);
-    targetCtx.lineTo(-3 - legSwing * 0.5, 26);
-    targetCtx.lineTo(-16 - legSwing * 0.5, 26);
-    targetCtx.closePath();
-    targetCtx.fill();
-    targetCtx.stroke();
-
-    targetCtx.lineWidth = 1.8;
-    targetCtx.fillStyle = '#4a4e52';
-    targetCtx.fillRect(5 + legSwing * 0.4, 15, 7, 7);
-    targetCtx.strokeRect(5 + legSwing * 0.4, 15, 7, 7);
-
-    targetCtx.lineWidth = 3.4;
-    targetCtx.fillStyle = '#151518';
-    targetCtx.beginPath();
-    targetCtx.roundRect(-19, -7, 38, 22, 11);
-    targetCtx.fill();
-    targetCtx.stroke();
-
-    targetCtx.save();
-    targetCtx.scale(facing, 1);
-    targetCtx.fillStyle = '#ffffff';
-    targetCtx.font = '900 6.5px Arial Black, sans-serif';
-    targetCtx.textAlign = 'center';
-    targetCtx.fillText('F*CK IT', 0, 1.5);
-    targetCtx.fillText('IM PAID', 0, 9.5);
-    targetCtx.restore();
-
-    targetCtx.lineWidth = 3.2;
-    targetCtx.strokeStyle = '#000000';
-    targetCtx.fillStyle = '#e09f70';
-    targetCtx.beginPath();
-    targetCtx.arc(-16, -13, 4.2, 0, Math.PI * 2);
-    targetCtx.arc(16, -13, 4.2, 0, Math.PI * 2);
-    targetCtx.fill();
-    targetCtx.stroke();
-
-    targetCtx.beginPath();
-    targetCtx.ellipse(0, -12, 15, 10, 0, 0, Math.PI);
-    targetCtx.fill();
-    targetCtx.stroke();
-
-    targetCtx.lineWidth = 2.2;
-    targetCtx.beginPath();
-    targetCtx.arc(1, -10.5, 7.5, 0.2 * Math.PI, 0.8 * Math.PI);
-    targetCtx.stroke();
-
-    targetCtx.lineWidth = 3.4;
-    targetCtx.fillStyle = '#141418';
-    targetCtx.beginPath();
-    targetCtx.moveTo(-15, -23);
-    targetCtx.quadraticCurveTo(-15, -40, -6, -40);
-    targetCtx.lineTo(6, -40);
-    targetCtx.quadraticCurveTo(15, -40, 15, -23);
-    targetCtx.closePath();
-    targetCtx.fill();
-    targetCtx.stroke();
-
-    targetCtx.fillStyle = '#1e1e26';
-    targetCtx.beginPath();
-    targetCtx.roundRect(-17.5, -26.5, 35, 7.5, 3.5);
-    targetCtx.fill();
-    targetCtx.stroke();
-
-    targetCtx.lineWidth = 1.4;
-    targetCtx.fillStyle = '#ffffff';
-    targetCtx.beginPath();
-    targetCtx.ellipse(-10, -22.8, 3, 3.5, 0, 0, Math.PI * 2);
-    targetCtx.fill();
-    targetCtx.stroke();
-    targetCtx.fillStyle = '#000';
-    targetCtx.fillRect(-11.3, -23.5, 1.1, 1.4);
-    targetCtx.fillRect(-9.3, -23.5, 1.1, 1.4);
-
-    targetCtx.lineWidth = 2.6;
-    targetCtx.strokeStyle = '#000000';
-    targetCtx.fillStyle = '#ffffff';
-    targetCtx.beginPath();
-    targetCtx.roundRect(-8, -19.5, 23, 7.8, 3.5);
-    targetCtx.fill();
-    targetCtx.stroke();
-
-    targetCtx.fillStyle = '#0c0c10';
-    targetCtx.beginPath();
-    targetCtx.roundRect(-5.5, -18, 8.2, 4.8, 1.8);
-    targetCtx.roundRect(4.5, -18, 8.2, 4.8, 1.8);
-    targetCtx.fill();
-
-    targetCtx.strokeStyle = '#ffffff';
-    targetCtx.lineWidth = 1.3;
-    targetCtx.beginPath();
-    targetCtx.moveTo(-4, -17);
-    targetCtx.lineTo(-1.5, -14.5);
-    targetCtx.moveTo(6, -17);
-    targetCtx.lineTo(8.5, -14.5);
-    targetCtx.stroke();
+  if (ch.glasses) {
+    ctx.fillStyle = "#fff";
+    ctx.fillRect(px + 5, py + 7, 24, 6);
+    ctx.strokeRect(px + 5, py + 7, 24, 6);
   }
 
-  else if (charId === 'abyusif') {
-    targetCtx.lineWidth = 3.2;
-    targetCtx.strokeStyle = '#000000';
-
-    targetCtx.fillStyle = '#222';
-    targetCtx.beginPath();
-    targetCtx.ellipse(-7 - legSwing * 0.7, 29, 9.5, 5.5, 0, 0, Math.PI * 2);
-    targetCtx.ellipse(8 + legSwing * 0.7, 29, 10, 5.5, 0, 0, Math.PI * 2);
-    targetCtx.fill();
-    targetCtx.stroke();
-
-    targetCtx.fillStyle = '#2c3e50';
-    targetCtx.beginPath();
-    targetCtx.moveTo(-14, 11);
-    targetCtx.lineTo(14, 11);
-    targetCtx.lineTo(16 + legSwing * 0.5, 26);
-    targetCtx.lineTo(3 + legSwing * 0.5, 26);
-    targetCtx.lineTo(0, 19);
-    targetCtx.lineTo(-3 - legSwing * 0.5, 26);
-    targetCtx.lineTo(-15 - legSwing * 0.5, 26);
-    targetCtx.closePath();
-    targetCtx.fill();
-    targetCtx.stroke();
-
-    targetCtx.fillStyle = '#f5f6fa';
-    targetCtx.beginPath();
-    targetCtx.roundRect(-18, -7, 36, 21, 9);
-    targetCtx.fill();
-    targetCtx.stroke();
-
-    targetCtx.fillStyle = '#18181c';
-    targetCtx.fillRect(-15, -7, 4.5, 19);
-    targetCtx.strokeRect(-15, -7, 4.5, 19);
-    targetCtx.fillRect(10.5, -7, 4.5, 19);
-    targetCtx.strokeRect(10.5, -7, 4.5, 19);
-
-    targetCtx.save();
-    targetCtx.scale(facing, 1);
-    targetCtx.fillStyle = '#444';
-    targetCtx.font = '900 8px Arial Black, sans-serif';
-    targetCtx.textAlign = 'center';
-    targetCtx.fillText('DAR', 0, 7);
-    targetCtx.restore();
-
-    targetCtx.fillStyle = '#c6865c';
-    targetCtx.beginPath();
-    targetCtx.arc(-15, -14, 4, 0, Math.PI * 2);
-    targetCtx.arc(15, -14, 4, 0, Math.PI * 2);
-    targetCtx.fill();
-    targetCtx.stroke();
-
-    targetCtx.beginPath();
-    targetCtx.ellipse(0, -14, 14.5, 11.5, 0, 0, Math.PI * 2);
-    targetCtx.fill();
-    targetCtx.stroke();
-
-    targetCtx.fillStyle = '#000';
-    targetCtx.beginPath();
-    targetCtx.arc(-3, -16, 2, 0, Math.PI * 2);
-    targetCtx.arc(7, -16, 2, 0, Math.PI * 2);
-    targetCtx.fill();
-    targetCtx.lineWidth = 2.2;
-    targetCtx.beginPath();
-    targetCtx.moveTo(-6, -19.5);
-    targetCtx.lineTo(0, -19.5);
-    targetCtx.moveTo(4, -19.5);
-    targetCtx.lineTo(10, -19.5);
-    targetCtx.stroke();
-
-    targetCtx.fillStyle = '#111';
-    targetCtx.beginPath();
-    targetCtx.roundRect(-2, -11.5, 9, 2.3, 1);
-    targetCtx.fill();
-    targetCtx.beginPath();
-    targetCtx.arc(2.5, -5.5, 4.2, 0, Math.PI);
-    targetCtx.fill();
-
-    targetCtx.fillStyle = '#111114';
-    targetCtx.lineWidth = 2.8;
-    const curls = [
-      [-12, -23, 6], [-6, -27, 7], [2, -28, 7.5], [10, -26, 6.5], [14, -21, 5.5], [-15, -19, 5]
-    ];
-    for (let c of curls) {
-      targetCtx.beginPath();
-      targetCtx.arc(c[0], c[1], c[2], 0, Math.PI * 2);
-      targetCtx.fill();
-      targetCtx.stroke();
-    }
-  }
-
-  else if (charId === 'seif') {
-    targetCtx.lineWidth = 3.2;
-    targetCtx.strokeStyle = '#000000';
-
-    targetCtx.fillStyle = '#141417';
-    targetCtx.beginPath();
-    targetCtx.ellipse(-7 - legSwing * 0.7, 29, 9.5, 5.5, 0, 0, Math.PI * 2);
-    targetCtx.ellipse(8 + legSwing * 0.7, 29, 10, 5.5, 0, 0, Math.PI * 2);
-    targetCtx.fill();
-    targetCtx.stroke();
-
-    targetCtx.fillStyle = '#b2b6bc';
-    targetCtx.beginPath();
-    targetCtx.moveTo(-15, 11);
-    targetCtx.lineTo(15, 11);
-    targetCtx.lineTo(16.5 + legSwing * 0.5, 26);
-    targetCtx.lineTo(3 + legSwing * 0.5, 26);
-    targetCtx.lineTo(0, 19);
-    targetCtx.lineTo(-3 - legSwing * 0.5, 26);
-    targetCtx.lineTo(-16 - legSwing * 0.5, 26);
-    targetCtx.closePath();
-    targetCtx.fill();
-    targetCtx.stroke();
-
-    targetCtx.fillStyle = '#ffffff';
-    targetCtx.fillRect(-15, 9, 30, 3.5);
-    targetCtx.strokeStyle = '#ffffff';
-    targetCtx.lineWidth = 1.8;
-    targetCtx.beginPath();
-    targetCtx.moveTo(2, 12);
-    targetCtx.lineTo(2, 18);
-    targetCtx.moveTo(5, 12);
-    targetCtx.lineTo(6, 17);
-    targetCtx.stroke();
-
-    targetCtx.strokeStyle = '#000000';
-    targetCtx.lineWidth = 3.4;
-    targetCtx.fillStyle = '#16161a';
-    targetCtx.beginPath();
-    targetCtx.roundRect(-18, -7, 36, 18, 9);
-    targetCtx.fill();
-    targetCtx.stroke();
-
-    targetCtx.strokeStyle = '#dcdde1';
-    targetCtx.lineWidth = 2;
-    targetCtx.beginPath();
-    targetCtx.moveTo(3, -7);
-    targetCtx.lineTo(3, 2);
-    targetCtx.stroke();
-
-    targetCtx.strokeStyle = '#000000';
-    targetCtx.lineWidth = 3.2;
-    targetCtx.fillStyle = '#deb08e';
-    targetCtx.beginPath();
-    targetCtx.arc(-14, -14, 3.8, 0, Math.PI * 2);
-    targetCtx.arc(14, -14, 3.8, 0, Math.PI * 2);
-    targetCtx.fill();
-    targetCtx.stroke();
-
-    targetCtx.beginPath();
-    targetCtx.ellipse(0, -14, 14, 11, 0, 0, Math.PI * 2);
-    targetCtx.fill();
-    targetCtx.stroke();
-
-    targetCtx.fillStyle = '#222';
-    targetCtx.beginPath();
-    targetCtx.arc(1, -5.5, 5, 0.1 * Math.PI, 0.9 * Math.PI);
-    targetCtx.fill();
-
-    targetCtx.fillStyle = '#000';
-    targetCtx.beginPath();
-    targetCtx.arc(-2, -16, 1.9, 0, Math.PI * 2);
-    targetCtx.arc(7, -16, 1.9, 0, Math.PI * 2);
-    targetCtx.fill();
-
-    targetCtx.fillStyle = '#18181c';
-    targetCtx.lineWidth = 2.6;
-    const topCurls = [
-      [-11, -23, 5.2], [-4, -26, 6], [4, -26, 6], [11, -23, 5.2]
-    ];
-    for (let c of topCurls) {
-      targetCtx.beginPath();
-      targetCtx.arc(c[0], c[1], c[2], 0, Math.PI * 2);
-      targetCtx.fill();
-      targetCtx.stroke();
-    }
-  }
-
-  else if (charId === 'youssef_hamada') {
-    targetCtx.lineWidth = 3.2;
-    targetCtx.strokeStyle = '#000000';
-
-    targetCtx.fillStyle = '#f1f2f6';
-    targetCtx.beginPath();
-    targetCtx.ellipse(-7 - legSwing * 0.7, 29, 9.5, 5.5, 0, 0, Math.PI * 2);
-    targetCtx.ellipse(8 + legSwing * 0.7, 29, 10, 5.5, 0, 0, Math.PI * 2);
-    targetCtx.fill();
-    targetCtx.stroke();
-
-    targetCtx.fillStyle = '#3d3d45';
-    targetCtx.beginPath();
-    targetCtx.moveTo(-14, 11);
-    targetCtx.lineTo(14, 11);
-    targetCtx.lineTo(16 + legSwing * 0.5, 26);
-    targetCtx.lineTo(3 + legSwing * 0.5, 26);
-    targetCtx.lineTo(0, 19);
-    targetCtx.lineTo(-3 - legSwing * 0.5, 26);
-    targetCtx.lineTo(-15 - legSwing * 0.5, 26);
-    targetCtx.closePath();
-    targetCtx.fill();
-    targetCtx.stroke();
-
-    targetCtx.fillStyle = '#ffffff';
-    targetCtx.beginPath();
-    targetCtx.roundRect(-18, -7, 36, 21, 9);
-    targetCtx.fill();
-    targetCtx.stroke();
-
-    targetCtx.fillStyle = '#d49a72';
-    targetCtx.beginPath();
-    targetCtx.arc(-14, -14, 4, 0, Math.PI * 2);
-    targetCtx.arc(14, -14, 4, 0, Math.PI * 2);
-    targetCtx.fill();
-    targetCtx.stroke();
-
-    targetCtx.beginPath();
-    targetCtx.ellipse(0, -14, 14, 11, 0, 0, Math.PI * 2);
-    targetCtx.fill();
-    targetCtx.stroke();
-
-    targetCtx.fillStyle = '#000';
-    targetCtx.beginPath();
-    targetCtx.arc(-2, -15.5, 1.9, 0, Math.PI * 2);
-    targetCtx.arc(7, -15.5, 1.9, 0, Math.PI * 2);
-    targetCtx.fill();
-
-    targetCtx.fillStyle = '#141414';
-    targetCtx.beginPath();
-    targetCtx.roundRect(-1.5, -11, 8.5, 2.1, 1);
-    targetCtx.fill();
-    targetCtx.beginPath();
-    targetCtx.arc(2.5, -5.2, 4.4, 0, Math.PI);
-    targetCtx.fill();
-
-    targetCtx.fillStyle = '#111';
-    targetCtx.beginPath();
-    targetCtx.arc(-6, -20, 4, 0, Math.PI * 2);
-    targetCtx.arc(0, -20.5, 4.2, 0, Math.PI * 2);
-    targetCtx.arc(6, -20, 3.8, 0, Math.PI * 2);
-    targetCtx.fill();
-
-    targetCtx.lineWidth = 3.2;
-    targetCtx.fillStyle = '#18181d';
-    targetCtx.beginPath();
-    targetCtx.arc(0, -21, 14.5, Math.PI, 0);
-    targetCtx.closePath();
-    targetCtx.fill();
-    targetCtx.stroke();
-
-    targetCtx.fillStyle = '#111115';
-    targetCtx.beginPath();
-    targetCtx.roundRect(-2, -23.5, 22, 4.5, 2.5);
-    targetCtx.fill();
-    targetCtx.stroke();
-  }
-
-  targetCtx.restore();
-}
-
-function initCharacterMenu() {
-  const grid = document.getElementById('char-grid');
-  grid.innerHTML = '';
-
-  CHARACTERS.forEach(char => {
-    const card = document.createElement('div');
-    card.className = 'char-card' + (char.id === selectedCharId ? ' selected' : '');
-    card.dataset.id = char.id;
-
-    if (char.badge) {
-      const badge = document.createElement('div');
-      badge.className = 'char-badge';
-      badge.innerText = char.badge;
-      card.appendChild(badge);
-    }
-
-    const previewCanvas = document.createElement('canvas');
-    previewCanvas.width = 72;
-    previewCanvas.height = 82;
-    previewCanvas.className = 'char-preview';
-    const pCtx = previewCanvas.getContext('2d');
-    pCtx.translate(36, 44);
-    pCtx.scale(0.98, 0.98);
-    drawCharacterSprite(pCtx, char.id, 1, 0, false, 0);
-
-    const nameEl = document.createElement('div');
-    nameEl.className = 'char-name';
-    nameEl.innerText = char.name;
-
-    const roleEl = document.createElement('div');
-    roleEl.className = 'char-role';
-    roleEl.innerText = char.role;
-
-    card.appendChild(previewCanvas);
-    card.appendChild(nameEl);
-    card.appendChild(roleEl);
-
-    card.addEventListener('click', () => {
-      selectedCharId = char.id;
-      localStorage.setItem('icy_selected_char', selectedCharId);
-      document.querySelectorAll('.char-card').forEach(c => c.classList.remove('selected'));
-      card.classList.add('selected');
-      playSound('select');
-      updateHUD();
-    });
-
-    grid.appendChild(card);
-  });
-}
-
-function drawBrickBackground(season) {
-  ctx.fillStyle = season.brickBg;
-  ctx.fillRect(0, 0, W, H);
-
-  const brickW = 64;
-  const brickH = 32;
-  const scrollOffset = (cameraY * 0.45) % (brickH * 2);
-
-  for (let row = -2; row < Math.ceil(H / brickH) + 2; row++) {
-    const y = row * brickH + scrollOffset;
-    const isOdd = Math.abs(row) % 2 === 1;
-    const xStart = isOdd ? -brickW / 2 : 0;
-
-    for (let x = xStart; x < W; x += brickW) {
-      ctx.fillStyle = season.brickFill;
-      ctx.fillRect(x + 2, y + 2, brickW - 4, brickH - 4);
-
-      ctx.fillStyle = season.brickHighlight;
-      ctx.fillRect(x + 2, y + 2, brickW - 4, 3);
-      ctx.fillRect(x + 2, y + 2, 3, brickH - 4);
-    }
-  }
+  ctx.font = "bold 10px sans-serif";
+  ctx.textAlign = "center";
+  const tag = (isDev ? "[مطور] " : "") + "@" + uname + (isTraitorHighlight ? " [خائن]" : "");
+  ctx.fillStyle = isTraitorHighlight ? "#ff4757" : (isDev ? "#ffdd59" : "#fff");
+  ctx.fillText(tag, px + player.w / 2, py - 6);
 }
 
 function draw() {
-  const season = SEASONS[currentSeasonIndex];
+  const season = getSeason();
+  ctx.fillStyle = gameMode === "ship" ? "#101626" : season.sky;
+  ctx.fillRect(0, 0, W, H);
 
-  drawBrickBackground(season);
+  ctx.fillStyle = "#242234";
+  ctx.fillRect(0, 0, 18, H);
+  ctx.fillRect(W - 18, 0, 18, H);
 
-  if (lightningFlash > 0) {
-    ctx.fillStyle = `rgba(255, 255, 255, ${lightningFlash})`;
-    ctx.fillRect(0, 0, W, H);
+  ctx.fillStyle = gameMode === "ship" ? "#4b7bec" : season.plat;
+  ctx.strokeStyle = "#000";
+  ctx.lineWidth = 2.5;
+  for (const p of platforms) {
+    const dy = p.y + cameraY;
+    if (dy < -30 || dy > H + 30) continue;
+    ctx.fillRect(p.x, dy, p.w, p.h);
+    ctx.strokeRect(p.x, dy, p.w, p.h);
   }
 
-  ctx.fillStyle = season.wallFill;
-  ctx.fillRect(0, 0, WALL_WIDTH, H);
-  ctx.fillRect(W - WALL_WIDTH, 0, WALL_WIDTH, H);
-
-  ctx.fillStyle = season.wallEdge;
-  const pillarOffset = cameraY % 48;
-  for (let y = pillarOffset - 48; y < H; y += 48) {
-    ctx.fillRect(2, y, WALL_WIDTH - 6, 6);
-    ctx.fillRect(W - WALL_WIDTH + 4, y + 24, WALL_WIDTH - 6, 6);
+  for (const uname of Object.keys(roomPlayers)) {
+    if (currentUser && uname === currentUser.username) continue;
+    const op = roomPlayers[uname];
+    if (!op || op.mode !== gameMode) continue;
+    const showTraitor = (gameMode === "ship" && currentUser && currentUser.isAdmin && uname === traitorUser);
+    drawPlayerModel(op.x, op.y + cameraY, op.char || "darwin", uname, Boolean(op.isAdmin), showTraitor);
   }
 
-  ctx.strokeStyle = '#000';
-  ctx.lineWidth = 3.5;
-  ctx.beginPath();
-  ctx.moveTo(WALL_WIDTH, 0);
-  ctx.lineTo(WALL_WIDTH, H);
-  ctx.moveTo(W - WALL_WIDTH, 0);
-  ctx.lineTo(W - WALL_WIDTH, H);
-  ctx.stroke();
-
-  for (let p of platforms) {
-    const drawY = p.y + cameraY;
-    if (drawY < -40 || drawY > H + 40) continue;
-
-    ctx.lineJoin = 'round';
-    ctx.lineWidth = 3;
-    ctx.strokeStyle = '#000000';
-
-    ctx.fillStyle = p.isMilestone ? '#27ae60' : season.platBase;
-    ctx.beginPath();
-    ctx.roundRect(p.x, drawY + 4, p.w, p.h - 4, 5);
-    ctx.fill();
-    ctx.stroke();
-
-    ctx.fillStyle = p.isMilestone ? '#2ecc71' : season.platTop;
-    ctx.beginPath();
-    ctx.moveTo(p.x, drawY + 6);
-    ctx.lineTo(p.x, drawY);
-    ctx.lineTo(p.x + p.w, drawY);
-    ctx.lineTo(p.x + p.w, drawY + 6);
-
-    const toothWidth = 10;
-    for (let tx = p.x + p.w; tx > p.x; tx -= toothWidth) {
-      const nextX = Math.max(p.x, tx - toothWidth);
-      const midX = (tx + nextX) / 2;
-      ctx.lineTo(midX, drawY + 12);
-      ctx.lineTo(nextX, drawY + 6);
-    }
-    ctx.closePath();
-    ctx.fill();
-    ctx.stroke();
-
-    if (p.floor > 0 && p.floor % 10 === 0) {
-      const signW = 44;
-      const signH = 18;
-      const signX = p.x + p.w / 2 - signW / 2;
-      const signY = drawY + p.h - 1;
-
-      ctx.fillStyle = '#784820';
-      ctx.lineWidth = 2.5;
-      ctx.beginPath();
-      ctx.roundRect(signX, signY, signW, signH, 3);
-      ctx.fill();
-      ctx.stroke();
-
-      ctx.strokeStyle = '#523014';
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.moveTo(signX + 3, signY + 6);
-      ctx.lineTo(signX + signW - 3, signY + 6);
-      ctx.stroke();
-
-      ctx.fillStyle = '#ffffff';
-      ctx.font = 'bold 11px Arial, sans-serif';
-      ctx.textAlign = 'center';
-      ctx.fillText(p.floor, signX + signW / 2, signY + 13);
-    }
-  }
-
-  ctx.save();
-  ctx.translate(player.x + player.w / 2, player.y + player.h / 2 + cameraY);
-  if (!player.isSpinning) {
-    ctx.rotate(player.vx * 0.02);
-  }
-  drawCharacterSprite(ctx, selectedCharId, player.facing, player.walkFrame, player.isSpinning, player.spinAngle);
-  ctx.restore();
-
-  for (let pt of particles) {
-    if (season.id === 'rain' || season.id === 'storm') {
-      ctx.strokeStyle = 'rgba(130, 204, 221, 0.7)';
-      ctx.lineWidth = 1.8;
-      ctx.beginPath();
-      ctx.moveTo(pt.x, pt.y);
-      ctx.lineTo(pt.x - 3, pt.y + pt.size);
-      ctx.stroke();
-    } else if (season.id === 'snow') {
-      ctx.fillStyle = '#ffffff';
-      ctx.beginPath();
-      ctx.arc(pt.x, pt.y, pt.size * 0.55, 0, Math.PI * 2);
-      ctx.fill();
-    } else if (season.id === 'autumn') {
-      ctx.fillStyle = '#e67e22';
-      ctx.strokeStyle = '#000';
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.ellipse(pt.x, pt.y, pt.size, pt.size * 0.5, pt.angle, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.stroke();
-    } else {
-      ctx.fillStyle = 'rgba(255, 221, 89, 0.45)';
-      ctx.beginPath();
-      ctx.arc(pt.x, pt.y, pt.size * 0.45, 0, Math.PI * 2);
-      ctx.fill();
-    }
-  }
-
-  for (let ft of floatingTexts) {
-    ctx.save();
-    ctx.globalAlpha = ft.alpha;
-    ctx.font = '900 22px Arial Black, sans-serif';
-    ctx.textAlign = 'center';
-    ctx.lineWidth = 4;
-    ctx.strokeStyle = '#000';
-    ctx.strokeText(ft.text, ft.x, ft.y + cameraY);
-    ctx.fillStyle = ft.color;
-    ctx.fillText(ft.text, ft.x, ft.y + cameraY);
-    ctx.restore();
+  if (currentUser) {
+    const selfTraitor = (gameMode === "ship" && (traitorUser === currentUser.username || currentUser.isAdmin) && traitorUser === currentUser.username);
+    drawPlayerModel(player.x, player.y + cameraY, currentUser.selectedChar, currentUser.username, currentUser.isAdmin, selfTraitor);
   }
 }
 
-function loop() {
-  update();
+function loop(now) {
+  update(now || 0);
   draw();
   requestAnimationFrame(loop);
 }
 
-initCharacterMenu();
-resetGame();
-loop();
+document.getElementById("btn-play-tower").addEventListener("click", () => {
+  gameMode = "tower";
+  document.getElementById("hub-screen").classList.add("hidden");
+  resetGame();
+  gameState = "PLAYING";
+  publishRoomState();
+});
+document.getElementById("btn-play-ship").addEventListener("click", startShipMode);
+document.getElementById("btn-retry").addEventListener("click", () => {
+  document.getElementById("gameover-screen").classList.add("hidden");
+  resetGame();
+  gameState = "PLAYING";
+  publishRoomState();
+});
+document.getElementById("btn-back-hub").addEventListener("click", openHub);
+document.getElementById("btn-menu").addEventListener("click", () => {
+  if (!currentUser) return;
+  openHub();
+});
+
+(async function restoreSession() {
+  await authReadyPromise;
+  const savedUser = localStorage.getItem(SESSION_KEY);
+  if (savedUser) {
+    const acc = await readAccount(savedUser);
+    if (acc) {
+      currentUser = {
+        friends: [],
+        incomingRequests: [],
+        unlocked: ["darwin"],
+        selectedChar: "darwin",
+        ...acc
+      };
+      if (currentUser.isAdmin) applyAdminState(currentUser);
+      openHub();
+    }
+  }
+  requestAnimationFrame(loop);
+})();
 </script>
 </body>
 </html>
